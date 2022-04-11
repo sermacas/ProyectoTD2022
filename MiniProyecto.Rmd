@@ -1,0 +1,12 @@
+---
+title: "MiniProyecto"
+author: "Sergio Marín Castro // Laura Isabel Montoliu Peris // Beatriz Perello Osborne // Gonzalo Sanchez Muñoz"
+date: "11/4/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
