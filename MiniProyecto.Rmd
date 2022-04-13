@@ -11,25 +11,44 @@ knitr::opts_chunk$set(echo = TRUE)
 #LIBRERIAS
 library(readr)
 library(dplyr)
+library(tidyr)
+library(stringr)
+library(lubridate)
+library(ggplot2)
+
+#SIGNIFICADO DE LAS VARIABLES --> 
+
+#recvTime : Fecha en la que se inserto el dato en la plataforma
+#FiwareServicePath : Servicio al que pertenece el sensor
+#EntityType : Tipo de sensor
+#EntityId : Identificador único del sensor
+#LAeq : En este caso el período establecida para este sensor es de 1 minuto
+#LAeq_d: Es un indicador de ruido durante el dia desde las 7 hasta las 19 horas.(12h)
+#LAeq_den: Indice de ruido día-tarde-noche, para determinar la molestia vinculada a la exposición al ruido.
+#LAeq_e: Es un indicador del nivel sonoro durante la tarde desde las 19 hasta las 23 horas.(4h)
+#LAeq_n: Es un indicador del nivel sonoro durante la noche desde las 23 hasta las 7 horas.(8h)
+#Dateobserved: Día al que se refieren las medidas.
 ```
 
+PASO 4
 ```{r}
 
 #IMPORTAR FICHEROS
-VivChafCadz <- read_csv("data/ VivonsChaflánCádiz.csv")
-Cadiz3 <- read_csv("data/Cadiz3.csv")
-Cadiz16 <- read_csv("data/Cadiz16.csv")
-CarlCerv34 <- read_csv("data/CarlesCervera34.csv")
-CarlCervChaf <- read_csv("data/CarlesCervera Chaflán.csv")
-Cuba3 <- read_csv("data/Cuba3.csv")
-DoctorSerrano21 <- read_csv("data/DoctorSerrano21.csv")
-GeneralPrim <- read_csv("data/GeneralPrim.csv")
-PuertoRico21 <- read_csv("data/PuertoRico21.csv")
-SalvAbrilChaf <- read_csv("data/SalvadorAbrilChaflán.csv")
-Sueca2 <- read_csv("data/Sueca2.csv")
-Sueca32 <- read_csv("data/Sueca32.csv")
-Sueca61 <- read_csv("data/Sueca61.csv")
-SuecaEsqDenia <- read_csv("data/SuecaEsqDenia.csv")
+
+VivChafCadz <- read_csv("data/ VivonsChaflánCádiz.csv", show_col_types = FALSE)
+Cadiz3 <- read_csv("data/Cadiz3.csv", show_col_types = FALSE)
+Cadiz16 <- read_csv("data/Cadiz16.csv", show_col_types = FALSE)
+CarlCerv34 <- read_csv("data/CarlesCervera34.csv", show_col_types = FALSE)
+CarlCervChaf <- read_csv("data/CarlesCervera Chaflán.csv", show_col_types = FALSE)
+Cuba3 <- read_csv("data/Cuba3.csv", show_col_types = FALSE)
+DoctorSerrano21 <- read_csv("data/DoctorSerrano21.csv", show_col_types = FALSE)
+GeneralPrim <- read_csv("data/GeneralPrim.csv", show_col_types = FALSE)
+PuertoRico21 <- read_csv("data/PuertoRico21.csv", show_col_types = FALSE)
+SalvAbrilChaf <- read_csv("data/SalvadorAbrilChaflán.csv", show_col_types = FALSE)
+Sueca2 <- read_csv("data/Sueca2.csv", show_col_types = FALSE)
+Sueca32 <- read_csv("data/Sueca32.csv", show_col_types = FALSE)
+Sueca61 <- read_csv("data/Sueca61.csv", show_col_types = FALSE)
+SuecaEsqDenia <- read_csv("data/SuecaEsqDenia.csv", show_col_types = FALSE)
 
 ```
 
@@ -43,7 +62,50 @@ View(RUZAFA)
 ```
 
 ```{r}
+#EXPLORACION INICIAL DE LOS DATOS
+dim(RUZAFA)
+names(RUZAFA)
+summary(RUZAFA)
+str(RUZAFA)
+attach(RUZAFA)
+# Los datos se han recgido desde 2020-09-17 hasta 2022-04-10
+max(dateObserved)
+min(dateObserved)
+#EL año 2021 esta cmpleto en los otros dos hay muchos menos dias
+RUZAFA%>%
+  group_by(Año = year(dateObserved))%>%summarise(min= min(dateObserved) ,max=    
+  max(dateObserved))
+#solo hay un tipo de sensor y servicio al que pertencen. 
+table(entityType)
+table(fiwareServicePath)
+#Algunas calles tienen mas datos de sonoridad que otras y una no tiene datos para 2022
+table(entityId)
+ggplot(RUZAFA, aes(entityId, fill =factor(year(dateObserved)))) + geom_bar() +theme(axis.text.x = element_text(angle = 90, hjust = 1))+labs(x="Calles",y = "dias", title="Dias de estudio por calle") + guides(fill = guide_legend(title = "Años"))
 
+detach(RUZAFA)
+```
+
+```{r}
+
+#¿Cual es la calle que mas ha molestado a los vecinos en los tres ultimos años?
+RUZAFA %>% group_by(entityId)%>% summarise(MaxMolestia= max(LAeq_den)) %>% filter(MaxMolestia == max(MaxMolestia))
+
+#PREGUNTAS:
+
+#1.¿Cual es la calle que mas ha molestado a los vecinos en en los tres ultimos años?¿Y la que menos?
+#2.¿En que calle ha incrementado mas el ruido a lo largo del año 2022?
+#3.¿La sonoridad en Ruzafa ha ido aumentado o disminuyendo a lo largo del tiempo?
+#4.¿Que año ha sido el mas tranquilo?
+#5.¿El covid afectó en algo?
+
+#6.¿Que calles han sido las mas ruidosas durante el dia, la tarde, y la noche? ¿Y la menos?
+#7.¿Suele haber mas silencio por la tarde o durante el dia en Ruzafa?
+
+#8.¿En que mes ha habido mas acumulación de ruido en Ruzafa en cada año?
+#9.¿Que calles son las mas tranquilas para vivir en cada estacion de año?
+#10.¿En que calle hay mas ruido los fines de semana en 2022? ¿Hay alguna relacion con la mas ruidosa por la noche?
+#11.¿En que dia de la semana ha habido mas ruido por calle?¿Y en general?
 
 ```
+
 
