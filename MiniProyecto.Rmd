@@ -7,6 +7,28 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+#LIBRERIAS
+library(readr)
+```
+
+```{r}
+
+#IMPORTAR FICHEROS
+VivChafCadz <- read_csv("data/ VivonsChaflánCádiz.csv")
+Cadiz3 <- read_csv("data/Cadiz3.csv")
+Cadiz16 <- read_csv("data/Cadiz16.csv")
+CarlCervChaf <- read_csv("data/CarlesCervera Chaflán.csv")
+Cuba3 <- read_csv("data/Cuba3.csv")
+DoctorSerrano21 <- read_csv("data/DoctorSerrano21.csv")
+GeneralPrim <- read_csv("data/GeneralPrim.csv")
+PuertoRico21 <- read_csv("data/PuertoRico21.csv")
+SalvadorAbrilChaf <- read_csv("data/SalvadorAbrilChaflán.csv")
+Sueca2 <- read_csv("data/Sueca2.csv")
+Sueca32 <- read_csv("data/Sueca32.csv")
+Sueca61 <- read_csv("data/Sueca61.csv")
+SuecaEsqDenia <- read_csv("data/SuecaEsqDenia.csv")
+
 ```
 
 
