@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #LIBRERIAS
 library(readr)
+library(dplyr)
 ```
 
 ```{r}
@@ -18,12 +19,13 @@ library(readr)
 VivChafCadz <- read_csv("data/ VivonsChaflánCádiz.csv")
 Cadiz3 <- read_csv("data/Cadiz3.csv")
 Cadiz16 <- read_csv("data/Cadiz16.csv")
+CarlCerv34 <- read_csv("data/CarlesCervera34.csv")
 CarlCervChaf <- read_csv("data/CarlesCervera Chaflán.csv")
 Cuba3 <- read_csv("data/Cuba3.csv")
 DoctorSerrano21 <- read_csv("data/DoctorSerrano21.csv")
 GeneralPrim <- read_csv("data/GeneralPrim.csv")
 PuertoRico21 <- read_csv("data/PuertoRico21.csv")
-SalvadorAbrilChaf <- read_csv("data/SalvadorAbrilChaflán.csv")
+SalvAbrilChaf <- read_csv("data/SalvadorAbrilChaflán.csv")
 Sueca2 <- read_csv("data/Sueca2.csv")
 Sueca32 <- read_csv("data/Sueca32.csv")
 Sueca61 <- read_csv("data/Sueca61.csv")
@@ -31,4 +33,17 @@ SuecaEsqDenia <- read_csv("data/SuecaEsqDenia.csv")
 
 ```
 
+```{r}
+#UNION DE FICHEROS
+
+RUZAFA <- VivChafCadz %>% full_join(Cadiz3) %>%full_join(Cadiz16) %>%full_join(CarlCervChaf) %>% full_join(CarlCerv34) %>% full_join(Cuba3) %>% full_join(DoctorSerrano21) %>% full_join(GeneralPrim)  %>% full_join(PuertoRico21) %>% full_join(SalvAbrilChaf)%>% full_join(Sueca2 )%>% full_join(Sueca32) %>% full_join(Sueca61) %>% full_join(SuecaEsqDenia)
+
+View(RUZAFA)
+
+```
+
+```{r}
+
+
+```
 
