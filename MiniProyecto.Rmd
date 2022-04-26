@@ -30,7 +30,10 @@ library(ggplot2)
 #Dateobserved: Día al que se refieren las medidas.
 ```
 
-PASO 4
+# Paso 4
+
+Este paso consiste en importar y fusionar todos los datos en un solo dataframe ("RUZAFA"), además debemos realizar una exploración inicial de los datos.
+
 ```{r}
 
 #IMPORTAR FICHEROS
@@ -90,22 +93,35 @@ detach(RUZAFA)
 #¿Cual es la calle que mas ha molestado a los vecinos en los tres ultimos años?
 RUZAFA %>% group_by(entityId)%>% summarise(MaxMolestia= max(LAeq_den)) %>% filter(MaxMolestia == max(MaxMolestia))
 
-#PREGUNTAS:
-
-#1.¿Cual es la calle que mas ha molestado a los vecinos en en los tres ultimos años?¿Y la que menos?
-#2.¿En que calle ha incrementado mas el ruido a lo largo del año 2022?
-#3.¿La sonoridad en Ruzafa ha ido aumentado o disminuyendo a lo largo del tiempo?
-#4.¿Que año ha sido el mas tranquilo?
-#5.¿El covid afectó en algo?
-
-#6.¿Que calles han sido las mas ruidosas durante el dia, la tarde, y la noche? ¿Y la menos?
-#7.¿Suele haber mas silencio por la tarde o durante el dia en Ruzafa?
-
-#8.¿En que mes ha habido mas acumulación de ruido en Ruzafa en cada año?
-#9.¿Que calles son las mas tranquilas para vivir en cada estacion de año?
-#10.¿En que calle hay mas ruido los fines de semana en 2022? ¿Hay alguna relacion con la mas ruidosa por la noche?
-#11.¿En que dia de la semana ha habido mas ruido por calle?¿Y en general?
-
 ```
 
+Posibles preguntas que se pueden plantear y se pueden resolver con los datos proporcionados.
 
+- PREGUNTAS:
+
+1.¿Cual es la calle que mas ha molestado a los vecinos en en los tres ultimos años?¿Y la que menos?
+2.¿En que calle ha incrementado mas el ruido a lo largo del año 2022?
+3.¿La sonoridad en Ruzafa ha ido aumentado o disminuyendo a lo largo del tiempo?
+4.¿Que año ha sido el mas tranquilo?
+5.¿El covid afectó en algo?
+6.¿Que calles han sido las mas ruidosas durante el dia, la tarde, y la noche? ¿Y la menos?
+7.¿Suele haber mas silencio por la tarde o durante el dia en Ruzafa?
+8.¿En que mes ha habido mas acumulación de ruido en Ruzafa en cada año?
+9.¿Que calles son las mas tranquilas para vivir en cada estacion de año?
+10.¿En que calle hay mas ruido los fines de semana en 2022? ¿Hay alguna relacion con la mas ruidosa por la noche?
+11.¿En que dia de la semana ha habido mas ruido por calle?¿Y en general?
+
+
+# Paso 5
+
+Para obtener un tidy dataset, es decir, un dataframe más representativo y claro, vamos a modificar los nombres de las columnas por unos más adecuados.
+
+```{r}
+# Modificamos nombres de columnas
+colnames(RUZAFA) # miramos los nombres que tiene el dataframe
+
+colnames(RUZAFA) <- c("Id", "Fecha_Registro", "Servicio_Sensor", "Tipo_Entidad_Sensor", "Id_Sensor",
+                      "Nivel_Sonoro_Continuo", "Nivel_Sonoro_Dia", "Nivel_Sonoro_dtn", # dtn - dia, tarde y noche
+                      "Nivel_Sonoro_Tarde", "Nivel_Sonoro_Noche", "Dia_Medicion", "Nombre_Calle")
+
+```
