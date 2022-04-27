@@ -7,7 +7,6 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
 #LIBRERIAS
 library(readr)
 library(dplyr)
@@ -15,9 +14,7 @@ library(tidyr)
 library(stringr)
 library(lubridate)
 library(ggplot2)
-
 #SIGNIFICADO DE LAS VARIABLES --> 
-
 #recvTime : Fecha en la que se inserto el dato en la plataforma
 #FiwareServicePath : Servicio al que pertenece el sensor
 #EntityType : Tipo de sensor
@@ -30,11 +27,12 @@ library(ggplot2)
 #Dateobserved: Día al que se refieren las medidas.
 ```
 
-PASO 4
+# Paso 4
+
+Este paso consiste en importar y fusionar todos los datos en un solo dataframe ("RUZAFA"), además debemos realizar una exploración inicial de los datos.
+
 ```{r}
-
 #IMPORTAR FICHEROS
-
 VivChafCadz <- read_csv("data/ VivonsChaflánCádiz.csv", show_col_types = FALSE)
 Cadiz3 <- read_csv("data/Cadiz3.csv", show_col_types = FALSE)
 Cadiz16 <- read_csv("data/Cadiz16.csv", show_col_types = FALSE)
@@ -49,14 +47,11 @@ Sueca2 <- read_csv("data/Sueca2.csv", show_col_types = FALSE)
 Sueca32 <- read_csv("data/Sueca32.csv", show_col_types = FALSE)
 Sueca61 <- read_csv("data/Sueca61.csv", show_col_types = FALSE)
 SuecaEsqDenia <- read_csv("data/SuecaEsqDenia.csv", show_col_types = FALSE)
-
 ```
 
 ```{r}
 #UNION DE FICHEROS
-
 RUZAFA <- VivChafCadz %>% full_join(Cadiz3) %>%full_join(Cadiz16) %>%full_join(CarlCervChaf) %>% full_join(CarlCerv34) %>% full_join(Cuba3) %>% full_join(DoctorSerrano21) %>% full_join(GeneralPrim)  %>% full_join(PuertoRico21) %>% full_join(SalvAbrilChaf)%>% full_join(Sueca2 )%>% full_join(Sueca32) %>% full_join(Sueca61) %>% full_join(SuecaEsqDenia)
-
 View(RUZAFA)
 
 ```
@@ -68,7 +63,7 @@ names(RUZAFA)
 summary(RUZAFA)
 str(RUZAFA)
 attach(RUZAFA)
-# Los datos se han recgido desde 2020-09-17 hasta 2022-04-10
+# Los datos se han reocgido desde 2020-09-17 hasta 2022-04-10
 max(dateObserved)
 min(dateObserved)
 #EL año 2021 esta cmpleto en los otros dos hay muchos menos dias
@@ -81,30 +76,52 @@ table(fiwareServicePath)
 #Algunas calles tienen mas datos de sonoridad que otras y una no tiene datos para 2022
 table(entityId)
 ggplot(RUZAFA, aes(entityId, fill =factor(year(dateObserved)))) + geom_bar() +theme(axis.text.x = element_text(angle = 90, hjust = 1))+labs(x="Calles",y = "dias", title="Dias de estudio por calle") + guides(fill = guide_legend(title = "Años"))
-
 detach(RUZAFA)
+#
 ```
 
+Posibles preguntas que se pueden plantear y se pueden resolver con los datos proporcionados.
+
+- PREGUNTAS:
+
+1.¿Cual es la calle que mas ha molestado a los vecinos en en los tres ultimos años?¿Y la que menos?
+2.¿En que calle ha incrementado mas el ruido a lo largo del año 2022?
+3.¿La sonoridad en Ruzafa ha ido aumentado o disminuyendo a lo largo del tiempo?
+4.¿Que año ha sido el mas tranquilo?
+5.¿El covid afectó en algo?
+6.¿Que calles han sido las mas ruidosas durante el dia, la tarde, y la noche? ¿Y la menos?
+7.¿Suele haber mas silencio por la tarde o durante el dia en Ruzafa?
+8.¿En que mes ha habido mas acumulación de ruido en Ruzafa en cada año?
+9.¿Que calles son las mas tranquilas para vivir en cada estacion de año?
+10.¿En que calle hay mas ruido los fines de semana en 2022? ¿Hay alguna relacion con la mas ruidosa por la noche?
+11.¿En que dia de la semana ha habido mas ruido por calle?¿Y en general?
+
+
+# Paso 5
+
+Para obtener un tidy dataset, es decir, un dataframe más representativo y claro, vamos a modificar los nombres de las columnas por unos más adecuados.
+
 ```{r}
+# Modificamos nombres de columnas
+colnames(RUZAFA) # miramos los nombres que tiene el dataframe
+colnames(RUZAFA) <- c("Id", "Fecha_Registro", "Servicio_Sensor", "Tipo_Entidad_Sensor", "Id_Sensor",
+                      "Nivel_Sonoro_Continuo", "Nivel_Sonoro_Dia", "Nivel_Sonoro_dtn", # dtn - dia, tarde y noche
+                      "Nivel_Sonoro_Tarde", "Nivel_Sonoro_Noche", "Dia_Medicion", "Nombre_Calle")
 
-#¿Cual es la calle que mas ha molestado a los vecinos en los tres ultimos años?
-RUZAFA %>% group_by(entityId)%>% summarise(MaxMolestia= max(LAeq_den)) %>% filter(MaxMolestia == max(MaxMolestia))
+#Ahora eliminamos las columnas que no nos interesan
+RUZAFA1 <- RUZAFA %>% select(-Servicio_Sensor, -Tipo_Entidad_Sensor) 
 
-#PREGUNTAS:
+#Para que sea un conjunto tidy debe de haber una variable por cada columna, en este caso los niveles sonoros estan en varias columnas
+RUZAFA_TIDY2 <- RUZAFA1 %>% gather(Nivel_Sonoro, Valores, 4:8)
 
-#1.¿Cual es la calle que mas ha molestado a los vecinos en en los tres ultimos años?¿Y la que menos?
-#2.¿En que calle ha incrementado mas el ruido a lo largo del año 2022?
-#3.¿La sonoridad en Ruzafa ha ido aumentado o disminuyendo a lo largo del tiempo?
-#4.¿Que año ha sido el mas tranquilo?
-#5.¿El covid afectó en algo?
+#Ahora vemos si hay datos faltantes o incorrectos y los sustituimos
+#Se puede ver que hay dos valores "Inf" y los sustituiremos por los valores mas frecuentes(media)
+breaks <- c(min(RUZAFA_TIDY2$Valores), 0, 5, max(RUZAFA_TIDY2$Valores))
+ggplot(RUZAFA_TIDY2, aes(Valores)) + geom_histogram(bins=30)
+RUZAFA_TIDY2 %>% count(Valores)
+RUZAFA_TIDY2 %>% filter(Valores != "Inf") %>% summarise(Media = mean(Valores))#Media 60.4
+RUZAFA_TIDY <- RUZAFA_TIDY2 %>% mutate(Valores = ifelse(Valores ==  "Inf", 60.4, Valores)) %>% mutate(Nivel_Sonoro = as.factor(Nivel_Sonoro)) #y convertimos la columna Nivel_Sonoro en factores
 
-#6.¿Que calles han sido las mas ruidosas durante el dia, la tarde, y la noche? ¿Y la menos?
-#7.¿Suele haber mas silencio por la tarde o durante el dia en Ruzafa?
-
-#8.¿En que mes ha habido mas acumulación de ruido en Ruzafa en cada año?
-#9.¿Que calles son las mas tranquilas para vivir en cada estacion de año?
-#10.¿En que calle hay mas ruido los fines de semana en 2022? ¿Hay alguna relacion con la mas ruidosa por la noche?
-#11.¿En que dia de la semana ha habido mas ruido por calle?¿Y en general?
 
 ```
 
