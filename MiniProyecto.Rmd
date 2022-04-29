@@ -111,7 +111,7 @@ colnames(RUZAFA) <- c("Id", "Fecha_Registro", "Servicio_Sensor", "Tipo_Entidad_S
 #Ahora eliminamos las columnas que no nos interesan
 RUZAFA1 <- RUZAFA %>% select(-Servicio_Sensor, -Tipo_Entidad_Sensor) 
 
-<<<<<<< HEAD
+
 #Para que sea un conjunto tidy debe de haber una variable por cada columna, en este caso los niveles sonoros estan en varias columnas
 RUZAFA_TIDY2 <- RUZAFA1 %>% gather(Nivel_Sonoro, Valores, 4:8)
 
@@ -122,39 +122,5 @@ ggplot(RUZAFA_TIDY2, aes(Valores)) + geom_histogram(bins=30)
 RUZAFA_TIDY2 %>% count(Valores)
 RUZAFA_TIDY2 %>% filter(Valores != "Inf") %>% summarise(Media = mean(Valores))#Media 60.4
 RUZAFA_TIDY <- RUZAFA_TIDY2 %>% mutate(Valores = ifelse(Valores ==  "Inf", 60.4, Valores)) %>% mutate(Nivel_Sonoro = as.factor(Nivel_Sonoro)) #y convertimos la columna Nivel_Sonoro en factores 
-
-
-=======
->>>>>>> 4925f2d218f29a5b25db36e176e715e98eeadc11
-```
-
-Posibles preguntas que se pueden plantear y se pueden resolver con los datos proporcionados.
-
-- PREGUNTAS:
-
-1.¿Cual es la calle que mas ha molestado a los vecinos en en los tres ultimos años?¿Y la que menos?
-2.¿En que calle ha incrementado mas el ruido a lo largo del año 2022?
-3.¿La sonoridad en Ruzafa ha ido aumentado o disminuyendo a lo largo del tiempo?
-4.¿Que año ha sido el mas tranquilo?
-5.¿El covid afectó en algo?
-6.¿Que calles han sido las mas ruidosas durante el dia, la tarde, y la noche? ¿Y la menos?
-7.¿Suele haber mas silencio por la tarde o durante el dia en Ruzafa?
-8.¿En que mes ha habido mas acumulación de ruido en Ruzafa en cada año?
-9.¿Que calles son las mas tranquilas para vivir en cada estacion de año?
-10.¿En que calle hay mas ruido los fines de semana en 2022? ¿Hay alguna relacion con la mas ruidosa por la noche?
-11.¿En que dia de la semana ha habido mas ruido por calle?¿Y en general?
-
-
-# Paso 5
-
-Para obtener un tidy dataset, es decir, un dataframe más representativo y claro, vamos a modificar los nombres de las columnas por unos más adecuados.
-
-```{r}
-# Modificamos nombres de columnas
-colnames(RUZAFA) # miramos los nombres que tiene el dataframe
-
-colnames(RUZAFA) <- c("Id", "Fecha_Registro", "Servicio_Sensor", "Tipo_Entidad_Sensor", "Id_Sensor",
-                      "Nivel_Sonoro_Continuo", "Nivel_Sonoro_Dia", "Nivel_Sonoro_dtn", # dtn - dia, tarde y noche
-                      "Nivel_Sonoro_Tarde", "Nivel_Sonoro_Noche", "Dia_Medicion", "Nombre_Calle")
 
 ```
