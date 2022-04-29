@@ -120,7 +120,7 @@ breaks <- c(min(RUZAFA_TIDY2$Valores), 0, 5, max(RUZAFA_TIDY2$Valores))
 ggplot(RUZAFA_TIDY2, aes(Valores)) + geom_histogram(bins=30)
 RUZAFA_TIDY2 %>% count(Valores)
 RUZAFA_TIDY2 %>% filter(Valores != "Inf") %>% summarise(Media = mean(Valores))#Media 60.4
-RUZAFA_TIDY <- RUZAFA_TIDY2 %>% mutate(Valores = ifelse(Valores ==  "Inf", 60.4, Valores)) %>% mutate(Nivel_Sonoro = as.factor(Nivel_Sonoro)) #y convertimos la columna Nivel_Sonoro en factores
+RUZAFA_TIDY <- RUZAFA_TIDY2 %>% mutate(Valores = ifelse(Valores ==  "Inf", 60.4, Valores)) %>% mutate(Nivel_Sonoro = as.factor(Nivel_Sonoro)) #y convertimos la columna Nivel_Sonoro en factores 
 
 
 ```
