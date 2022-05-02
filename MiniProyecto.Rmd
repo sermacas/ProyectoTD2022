@@ -127,6 +127,7 @@ RUZAFA_TIDY2 %>% filter(Valores != "Inf") %>% summarise(Media = mean(Valores))#M
 RUZAFA_TIDY <- RUZAFA_TIDY2 %>% mutate(Valores = ifelse(Valores ==  "Inf", 60.4, Valores)) %>% mutate(Nivel_Sonoro = as.factor(Nivel_Sonoro)) #y convertimos la columna Nivel_Sonoro en factores .
 View(RUZAFA_TIDY)
 
+
 #Por ultimo separamos la columna Fecha Registro, ya que tiene dos variables una de fecha y otra de tiempo
 RUZAFA_TIDY = RUZAFA_TIDY %>%
               separate(Fecha_Registro, into=c("Fecha_Registro","Hora_Registro"), sep=10) %>% mutate(Fecha_Registro = as.Date(Fecha_Registro))
@@ -162,6 +163,7 @@ MaxMolestia
 
 #Por ultimo representamos las calles que mas han molestado a los vecinos en los ultimos 3 años
 ggplot(MaxMolestia, aes(Año, MaxRuido, color = Calles, size = MaxRuido)) + geom_point()
+
 ```
 
 
