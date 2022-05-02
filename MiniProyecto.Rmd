@@ -140,29 +140,30 @@ PUNTO 6
 #PREGUNTA 1
 #1.¿Cual es la calle que mas ha molestado a los vecinos en en los tres ultimos años?¿Y la que menos?
 
- 
 #Seleccionamos la calle con mas ruido de cada año
-Año2020 = RUZAFA_TIDY%>% group_by(Id_Sensor) %>% filter(year(Dia_Medicion) == "2020") %>% summarise(MaxRuido = max(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
-Año2021 = RUZAFA_TIDY%>% group_by(Id_Sensor) %>% filter(year(Dia_Medicion) == "2021") %>% summarise(MaxRuido = max(Valores)) %>% filter(MaxRuido == max(MaxRuido))
+Año2020 = RUZAFA_TIDY%>% group_by(Id_Sensor) %>% filter(year(Dia_Medicion) == "2020") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
-Año2022 =  RUZAFA_TIDY%>% group_by(Id_Sensor) %>% filter(year(Dia_Medicion) == "2022") %>% summarise(MaxRuido = max(Valores)) %>% filter(MaxRuido == max(MaxRuido))
+Año2021 = RUZAFA_TIDY%>% group_by(Id_Sensor) %>% filter(year(Dia_Medicion) == "2021") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
+
+Año2022 =  RUZAFA_TIDY%>% group_by(Id_Sensor) %>% filter(year(Dia_Medicion) == "2022") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
 #Los unimos y creamos un nuevo data frame
 MaxMolestia = rbind(Año2020, Año2021, Año2022)
-
+MaxMolestia
 #Añadimos la columna de años y lo convertimos en factor
 MaxMolestia = MaxMolestia %>% mutate(Año = c(2020, 2021, 2022))%>% mutate(Año = as.factor(Año))
 
 #Les damos nombres a los Id_Sonoro segun a la calle a la que pertenezcan
-MaxMolestia = MaxMolestia %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248676-daily", "SalvAbrilChaf ", Id_Sensor)) %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248670-daily", "CarlCervChaf", Id_Sensor)) %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248680-daily", "Sueca32", Id_Sensor)) 
-
+MaxMolestia = MaxMolestia %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248655-daily", "Cadiz3 ", Id_Sensor))
 #Renombramos la columna transformada de Id_Sonoro a Calles
 colnames(MaxMolestia)[1] <- "Calles"
 MaxMolestia
 
 #Por ultimo representamos las calles que mas han molestado a los vecinos en los ultimos 3 años
 ggplot(MaxMolestia, aes(Año, MaxRuido, color = Calles, size = MaxRuido)) + geom_point()
+
+#En conclusion podemos ver que la calle que mas a molestado a los vecinos en 2020, 2021 y 2022 es la misma, Cadiz3
 
 ```
 
