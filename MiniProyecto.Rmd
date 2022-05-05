@@ -14,6 +14,7 @@ library(tidyr)
 library(stringr)
 library(lubridate)
 library(ggplot2)
+library(paletteer)
 #SIGNIFICADO DE LAS VARIABLES --> 
 #recvTime : Fecha en la que se inserto el dato en la plataforma
 #FiwareServicePath : Servicio al que pertenece el sensor
@@ -77,6 +78,7 @@ table(fiwareServicePath)
 table(entityId)
 ggplot(RUZAFA, aes(entityId, fill =factor(year(dateObserved)))) + geom_bar() +theme(axis.text.x = element_text(angle = 90, hjust = 1))+labs(x="Calles",y = "dias", title="Dias de estudio por calle") + guides(fill = guide_legend(title = "Años"))
 detach(RUZAFA)
+
 #
 ```
 
@@ -86,17 +88,18 @@ Posibles preguntas que se pueden plantear y se pueden resolver con los datos pro
 HILO DE LA PRESENTACION-->
 Un señor que no esta seguro si comprarse una casa en Ruzafa y que tampoco sabe cual seria la mejor calle para vivir, nos ha planteado las siguientes preguntas:
 
-1.¿Cual es la calle que mas ha molestado a los vecinos en en los tres ultimos años?¿Y la que menos?
-2.¿En que calle ha incrementado mas el ruido a lo largo del año 2022?
+1.¿Cual es la calle que mas ha molestado a los vecinos en en los tres ultimos años?¿Y la que menos?(Laura)
+2.¿En que calle ha incrementado mas el ruido a lo largo del año 2022? (Laura)
 3.¿La sonoridad en Ruzafa ha ido aumentado o disminuyendo a lo largo del tiempo?
-4.¿Que año ha sido el más tranquilo?
-5.¿El covid afectó en algo? ¿Y las fallas? ¿Y la Navidad?
-6.¿Que calles han sido las mas ruidosas durante el dia, la tarde, y la noche? ¿Y las que menos?
-7.¿Suele haber mas silencio por la tarde o durante el dia en Ruzafa?
-8.¿En que mes ha habido mas acumulación de ruido en Ruzafa en cada año?
-9.¿Que calles son las mas tranquilas para vivir en cada estacion de año?
-10.¿En que calle hay mas ruido los fines de semana en 2022? ¿Hay alguna relacion con la mas ruidosa por la noche?
-11.¿En que dia de la semana ha habido mas ruido por calle?¿Y en general?
+4.¿El covid afectó en algo? ¿Y las fallas? ¿Y la Navidad?
+5.¿Que calles han sido las mas ruidosas durante el dia, la tarde, y la noche? ¿Y las que menos?
+6.¿Suele haber mas silencio por la tarde o durante el dia en Ruzafa?
+7.¿En que mes ha habido mas acumulación de ruido en Ruzafa en cada año?
+8.¿Que calles son las mas tranquilas para vivir en cada estacion de año?
+9.¿En que calle hay mas ruido los fines de semana en 2022? ¿Hay alguna relacion con la mas ruidosa por la noche?
+10.¿En que dia de la semana ha habido mas ruido por calle?¿Y en general?
+11. Hay que hacer analisis univariante y bivariante
+12. Analizar los datos faltantes
 
 RESPUESTA:
 En conclusion la calle que le recomendamos mas para vivir es: .... y la que menos es: .....
@@ -149,11 +152,12 @@ RUZAFA_TIDY = RUZAFA_TIDY [ , c(1,8,2,3,4,6,7,5)]
 
 PUNTO 6
 
+PREGUNTA 1
 ```{r}
-#PREGUNTA 1
+
 #1.¿Cual es la calle que mas ha molestado a los vecinos en en los tres ultimos años?¿Y la que menos?
 
-######################################  LA QUE MAS  ##############################################
+######################################  LA QUE MAS  #######################################
 
 #Seleccionamos la calle con mas ruido de cada año
 Año2020 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2020") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
@@ -169,11 +173,11 @@ MaxMolestia = MaxMolestia %>% mutate(Año = c(2020, 2021, 2022)) %>% mutate(Año
 MaxMolestia
 
 #Por ultimo representamos las calles que mas han molestado a los vecinos en los ultimos 3 años
-a =ggplot(MaxMolestia, aes(Año, MaxRuido, color = Calles, size = MaxRuido)) + geom_point()
+a =ggplot(MaxMolestia, aes(Año, MaxRuido, color = Calles, size = MaxRuido)) + geom_point(shape = 3, size=5) + ggtitle("Calles con mayor nivel de ruido de media por año")+scale_y_continuous(limits = c(53,67),name = "Nivel de ruido") 
 a
 #En conclusion podemos ver que la calle que más ha molestado a los vecinos en 2020, 2021 y 2022 es la misma, Cadiz3
 
-#######################################  LA QUE MENOS  ##############################################
+#######################################  LA QUE MENOS   ###################################
 
 Año2020 = RUZAFA_TIDY%>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2020") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
 
@@ -187,16 +191,123 @@ MinMolestia = rbind(Año2020, Año2021, Año2022)
 MinMolestia = MinMolestia %>% mutate(Año = c(2020, 2021, 2022)) %>% mutate(Año = as.factor(Año))
 
 #Por ultimo representamos las calles que mas han molestado a los vecinos en los ultimos 3 años
-b =ggplot(MinMolestia, aes(Año, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 1)
+b =ggplot(MinMolestia, aes(Año, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 10, size = 5)+ ggtitle("Calles con menor nivel de ruido de media por año")+scale_y_continuous(limits = c(53,67),name = "Nivel de ruido") 
 b
 #En conclusion podemos ver que la calle que menos ha molestado a los vecinos en 2020, 2021 y 2022 es la misma, GeneralPrim
 
 ```
 
+PREGUNTA 2
+
+```{r}
+#2.¿En que calle ha incrementado mas el ruido a lo largo del año 2022?
+RUZAFA_TIDY2 = RUZAFA_TIDY %>% filter(year(Dia_Medicion) == "2022") %>% group_by(Calles)
+RUZAFA_TIDY2 = RUZAFA_TIDY2%>%
+              select(Calles, Valores, Dia_Medicion)
+ggplot(RUZAFA_TIDY2, aes(Dia_Medicion, Valores)) + geom_line() + facet_wrap(~Calles)+geom_smooth(method = 'lm')
+
+#SOLUCION: Se puede ver que el nivel Sonoro de cada calle a lo largo de 2022 (enero-marzo) no varía notablemente excepto en el mes de marzo que en todas las calles el nivel aumenta.
+
+```
+
+PREGUNTA 3
+```{r}
+#3.¿La sonoridad en Ruzafa ha ido aumentado o disminuyendo a lo largo del tiempo?
+#¿El covid afectó en algo? ¿Y las fallas? ¿Y la Navidad?
+RUZAFA_TIDY3_1 = RUZAFA_TIDY %>% select(Dia_Medicion, Calles, Valores) %>% group_by(year(Dia_Medicion)) %>% filter(year(Dia_Medicion) == "2020")
+ggplot(RUZAFA_TIDY3_1, aes(Dia_Medicion, Valores, color = month(Dia_Medicion)))+ geom_line() + geom_smooth(color="darkgrey")
+
+RUZAFA_TIDY3_2 = RUZAFA_TIDY %>% select(Dia_Medicion, Calles, Valores) %>% group_by(year(Dia_Medicion)) %>% filter(year(Dia_Medicion) == "2021")
+ggplot(RUZAFA_TIDY3_2, aes(Dia_Medicion, Valores, color = month(Dia_Medicion)))+ geom_line() + scale_y_continuous(limits=c(40,100)) + geom_smooth(color="darkgrey")
+
+RUZAFA_TIDY3_3 = RUZAFA_TIDY %>% select(Dia_Medicion, Calles, Valores) %>% group_by(year(Dia_Medicion)) %>% filter(year(Dia_Medicion) == "2022")
+
+ggplot(RUZAFA_TIDY3_3, aes(Dia_Medicion, Valores, color = month(Dia_Medicion)))+ geom_line() + scale_y_continuous(limits=c(40,100)) + geom_smooth(color="darkgrey")
+
+
+```
+
+```{r}
+#POR LA NOCHE TODAS LAS CALLES NE UN GRAFICO
+#Relacionar luego max ruido con max noche
+dat = RUZAFA_TIDY %>% filter(Nivel_Sonoro == "Nivel_Sonoro_Noche") 
+
+#COLS = c("gray", "pink", "blue", "#5CB85C", "yellow", "orange", "purple", "black", "turquese", "brown", "green", "red", )
+ggplot(dat, aes(x = Dia_Medicion, y = Valores, color = Calles)) + geom_line(position = "jitter") + scale_color_discrete(labels = c("Calle 1", "Calle 2",  "Calle 3",  "Calle 4",  "Calle 5",  "Calle 6",  "Calle 7",  "Calle 8",  "Calle 9",  "Calle 10",  "Calle 11",  "Calle 12",  "Calle 13",  "Calle 14" )) + facet_wrap(~Calles)
+
+ggplot(dat, aes(x = Dia_Medicion, y = Valores, color = Calles)) + geom_line(position = "jitter") + scale_color_discrete(labels = c("Calle 1", "Calle 2",  "Calle 3",  "Calle 4",  "Calle 5",  "Calle 6",  "Calle 7",  "Calle 8",  "Calle 9",  "Calle 10",  "Calle 11",  "Calle 12",  "Calle 13",  "Calle 14" )) 
+
+dat= dat%>%group_by(Calles, Mes = month(Dia_Medicion)) %>% summarise(Max = max(Valores)) %>% mutate(Mes = ifelse(Mes == 1, "enero",Mes)) %>% mutate(Mes = ifelse(Mes == 2, "febrero",Mes)) %>% mutate(Mes = ifelse(Mes == 3, "marzo",Mes)) %>% mutate(Mes = ifelse(Mes == 4, "abril",Mes)) %>% mutate(Mes = ifelse(Mes == 5, "mayo",Mes)) %>% mutate(Mes = ifelse(Mes == 6, "junio",Mes)) %>% mutate(Mes = ifelse(Mes == 7, "julio",Mes)) %>% mutate(Mes = ifelse(Mes == 8, "agosto",Mes)) %>% mutate(Mes = ifelse(Mes == 9, "septiembre",Mes)) %>% mutate(Mes = ifelse(Mes == 10, "octubre",Mes)) %>% mutate(Mes = ifelse(Mes == 11, "noviembre",Mes)) %>% mutate(Mes = ifelse(Mes == 12, "diciembre",Mes))
+dat
+
+
+ 
+
+```
+
+
+PREGUNTA 4
+```{r}
+#4.¿Que calles han sido las mas ruidosas durante el dia, la tarde, y la noche? ¿Y las que menos?
+
+
+```
+
+PREGUNTA 5
+```{r}
+#5.¿Suele haber mas silencio por la tarde o durante el dia en Ruzafa?
+
+```
+
+PREGUNTA 6
+```{r}
+#6.¿En que mes ha habido mas acumulación de ruido en Ruzafa en cada año?
+ 
+```
+
+
+PREGUNTA 7
+```{r}
+#7.¿Que calles son las mas tranquilas para vivir en cada estacion de año?
+#Relacion pearson de marzo 2022 y 2021 y diciembre 2020 y 2021
 
 
 
+```
 
 
+PREGUNTA 8
+```{r}
+#8.¿En que calle hay mas ruido los fines de semana en 2022? ¿Hay alguna relacion con la mas ruidosa por la noche?
 
+```
+
+
+PREGUNTA 9
+```{r}
+#9.¿En que dia de la semana ha habido mas ruido por calle?¿Y en general?
+
+```
+
+PREGUNTA 10
+```{r}
+#10.¿En que dia de la semana ha habido mas ruido por calle?¿Y en general?
+
+
+```
+
+PREGUNTA 11
+
+```{r}
+
+#11. Hayq ue hacer analisis univariante y bivariante
+
+
+```
+
+PREGUNTA 12
+```{r}
+#12. Analizar los datos faltantes
+
+```
 
