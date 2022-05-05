@@ -132,6 +132,19 @@ View(RUZAFA_TIDY)
 RUZAFA_TIDY = RUZAFA_TIDY %>%
               separate(Fecha_Registro, into=c("Fecha_Registro","Hora_Registro"), sep=10) %>% mutate(Fecha_Registro = as.Date(Fecha_Registro))
 str(RUZAFA_TIDY)
+
+#No es tidy pero tambien añadimos la columna calles para que sea mas facil de entender los resultados
+#Seleccionamos la columna de Id_sensor
+Id_Sensor = RUZAFA_TIDY %>% select(Id_Sensor)
+
+#Creamos la columna Calles
+RUZAFA_TIDY = RUZAFA_TIDY %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248655-daily", "Cadiz3 ", Id_Sensor)) %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248677-daily" , "VivChafCadz", Id_Sensor))  %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248671-daily" , " Cadiz16 ", Id_Sensor))  %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248670-daily" , "CarlCervChaf", Id_Sensor))  %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248678-daily" , "CarlCerv34 ", Id_Sensor)) %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248682-daily" , "Cuba3", Id_Sensor)) %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248669-daily" , "DoctorSerrano21", Id_Sensor))  %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248682-daily" , "Cuba3", Id_Sensor)) %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248672-daily" , "PuertoRico21", Id_Sensor))  %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248676-daily" , "SalvAbrilChaf", Id_Sensor))  %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248683-daily", "Sueca2" , Id_Sensor)) %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248680-daily" , "Sueca32", Id_Sensor))  %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248684-daily","Sueca61", Id_Sensor)) %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248652-daily","SuecaEsqDenia",  Id_Sensor))  %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248661-daily" , "GeneralPrim",  Id_Sensor))  
+colnames(RUZAFA_TIDY) <- c("Id", "Fecha_Registro", "Hora_Registro", "Calles", "Dia_Medicion", "Nivel_Sonoro", "Valores")
+#Ahora se une el data frame con las calles y el dat frame con Id_Sensores
+RUZAFA_TIDY = cbind(RUZAFA_TIDY, Id_Sensor)
+
+#Por ultimo ordenamos de nuevo las columnas
+RUZAFA_TIDY = RUZAFA_TIDY [ , c(1,8,2,3,4,6,7,5)]
 ```
 
 PUNTO 6
@@ -140,30 +153,43 @@ PUNTO 6
 #PREGUNTA 1
 #1.¿Cual es la calle que mas ha molestado a los vecinos en en los tres ultimos años?¿Y la que menos?
 
+######################################  LA QUE MAS  ##############################################
+
 #Seleccionamos la calle con mas ruido de cada año
+Año2020 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2020") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
-Año2020 = RUZAFA_TIDY%>% group_by(Id_Sensor) %>% filter(year(Dia_Medicion) == "2020") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
+Año2021 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2021") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
-Año2021 = RUZAFA_TIDY%>% group_by(Id_Sensor) %>% filter(year(Dia_Medicion) == "2021") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
-
-Año2022 =  RUZAFA_TIDY%>% group_by(Id_Sensor) %>% filter(year(Dia_Medicion) == "2022") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
+Año2022 =  RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2022") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
 #Los unimos y creamos un nuevo data frame
 MaxMolestia = rbind(Año2020, Año2021, Año2022)
-MaxMolestia
 #Añadimos la columna de años y lo convertimos en factor
-MaxMolestia = MaxMolestia %>% mutate(Año = c(2020, 2021, 2022))%>% mutate(Año = as.factor(Año))
-
-#Les damos nombres a los Id_Sonoro segun a la calle a la que pertenezcan
-MaxMolestia = MaxMolestia %>% mutate(Id_Sensor = ifelse(Id_Sensor == "T248655-daily", "Cadiz3 ", Id_Sensor))
-#Renombramos la columna transformada de Id_Sonoro a Calles
-colnames(MaxMolestia)[1] <- "Calles"
+MaxMolestia = MaxMolestia %>% mutate(Año = c(2020, 2021, 2022)) %>% mutate(Año = as.factor(Año))
 MaxMolestia
 
 #Por ultimo representamos las calles que mas han molestado a los vecinos en los ultimos 3 años
-ggplot(MaxMolestia, aes(Año, MaxRuido, color = Calles, size = MaxRuido)) + geom_point()
+a =ggplot(MaxMolestia, aes(Año, MaxRuido, color = Calles, size = MaxRuido)) + geom_point()
+a
+#En conclusion podemos ver que la calle que más ha molestado a los vecinos en 2020, 2021 y 2022 es la misma, Cadiz3
 
-#En conclusion podemos ver que la calle que mas a molestado a los vecinos en 2020, 2021 y 2022 es la misma, Cadiz3
+#######################################  LA QUE MENOS  ##############################################
+
+Año2020 = RUZAFA_TIDY%>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2020") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
+
+Año2021 = RUZAFA_TIDY%>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2021") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
+
+Año2022 =  RUZAFA_TIDY%>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2022") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
+
+#Los unimos y creamos un nuevo data frame
+MinMolestia = rbind(Año2020, Año2021, Año2022)
+#Añadimos la columna de años y lo convertimos en factor
+MinMolestia = MinMolestia %>% mutate(Año = c(2020, 2021, 2022)) %>% mutate(Año = as.factor(Año))
+
+#Por ultimo representamos las calles que mas han molestado a los vecinos en los ultimos 3 años
+b =ggplot(MinMolestia, aes(Año, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 1)
+b
+#En conclusion podemos ver que la calle que menos ha molestado a los vecinos en 2020, 2021 y 2022 es la misma, GeneralPrim
 
 ```
 
