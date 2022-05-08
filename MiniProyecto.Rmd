@@ -93,7 +93,7 @@ Un señor que no esta seguro si comprarse una casa en Ruzafa y que tampoco sabe 
 3.¿La sonoridad en Ruzafa ha ido aumentado o disminuyendo a lo largo del tiempo?
 4.¿El covid afectó en algo? ¿Y las fallas? ¿Y la Navidad?
 5.¿Que calles han sido las mas ruidosas durante el dia, la tarde, y la noche? ¿Y las que menos?
-6.¿Suele haber mas silencio por la tarde o durante el dia en Ruzafa?
+6.¿Cuál es la calle que más MOLESTÓ a los vecinos sin contar los meses de verano? ¿Y la que menos?
 7.¿En que mes ha habido mas acumulación de ruido en Ruzafa en cada año?
 8.¿Que calles son las mas tranquilas para vivir en cada estacion de año?
 9.¿En que calle hay mas ruido los fines de semana en 2022? ¿Hay alguna relacion con la mas ruidosa por la noche?
@@ -154,20 +154,11 @@ PUNTO 6
 
 PREGUNTA 1
 ```{r}
-<<<<<<< HEAD
-#1.¿Cuál es la calle que más ha molestado a los vecinos en en los tres ultimos años?¿Y la que menos?
-
-######################################  LA QUE MAS  #######################################
-
-#Seleccionamos la calle con más ruido de cada año
-=======
-
 #1.¿Cual es la calle que mas ha molestado a los vecinos en en los tres ultimos años?¿Y la que menos?
 
 ######################################  LA QUE MAS  #######################################
 
 #Seleccionamos la calle con mas ruido de cada año
->>>>>>> 23675c8b6da8d5e455990d66835ae1bb83411c7c
 Año2020 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2020") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
 Año2021 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2021") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
@@ -247,10 +238,6 @@ ggplot(dat, aes(x = Dia_Medicion, y = Valores, color = Calles)) + geom_line(posi
 
 dat= dat%>%group_by(Calles, Mes = month(Dia_Medicion)) %>% summarise(Max = max(Valores)) %>% mutate(Mes = ifelse(Mes == 1, "enero",Mes)) %>% mutate(Mes = ifelse(Mes == 2, "febrero",Mes)) %>% mutate(Mes = ifelse(Mes == 3, "marzo",Mes)) %>% mutate(Mes = ifelse(Mes == 4, "abril",Mes)) %>% mutate(Mes = ifelse(Mes == 5, "mayo",Mes)) %>% mutate(Mes = ifelse(Mes == 6, "junio",Mes)) %>% mutate(Mes = ifelse(Mes == 7, "julio",Mes)) %>% mutate(Mes = ifelse(Mes == 8, "agosto",Mes)) %>% mutate(Mes = ifelse(Mes == 9, "septiembre",Mes)) %>% mutate(Mes = ifelse(Mes == 10, "octubre",Mes)) %>% mutate(Mes = ifelse(Mes == 11, "noviembre",Mes)) %>% mutate(Mes = ifelse(Mes == 12, "diciembre",Mes))
 dat
-
-
- 
-
 ```
 
 
@@ -269,42 +256,67 @@ PREGUNTA 5
 
 PREGUNTA 6
 ```{r}
-<<<<<<< HEAD
-#6.#¿Cuál es la calle que más MOLESTÓ a los vecinos en los meses de verano de los dos últimos años?¿Y la que menos?
+#¿Cuál es la calle que más MOLESTÓ a los vecinos sin contar los meses de verano? ¿Y la que menos?
+#Suponemos meses de verano como: Junio,Julio y Agosto.
 
-RUZAFA_TIDY$level=factor(RUZAFA_TIDY$Valores, levels=c("Very Low", "Low", "Medium", "Loud", "Very Loud"))
-nr1=RUZAFA_TIDY %>% ggplot(aes(Valores,..count..*100/sum(..count..), fill=Valores))+
-  geom_bar()+
-  scale_y_continuous(limits = c(0,100))+
-  labs(y="Porcentaje por nivel de sonido")
-nr2=RUZAFA_TIDY %>% ggplot(aes(Street, fill=Valores))+
-  geom_bar(position="dodge")+
-  theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.position="none")
-layout=matrix(c(1,3,2,3),2,2, byrow=T)
-multiplot(nr1, nr2, layout=layout)
+################################ MÁS MOLESTIA ######################################
+ENERO = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "1") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
-#Suponemos meses de verano como: Junio, Julio y Agosto.
+FEBRERO = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "2") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
-JUNIO2020 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2020") %>% filter(month(Dia_Medicion) == "02") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
+MARZO = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "3") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
-JULIO2020 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "07") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
+ABRIL = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "4") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
-AGOSTO2020 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2020") %>% filter(month(Dia_Medicion) == "08") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
+MAYO = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "5") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
-JUNIO2021 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2021") %>% filter(month(Dia_Medicion) == "06") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
+SEPTIEMBRE = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "9") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
-JULIO2021 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2021") %>% filter(month(Dia_Medicion) == "07") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
+OCTUBRE = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "10") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
-AGOSTO2021 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2021") %>% filter(month(Dia_Medicion) == "08") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
+NOVIEMBRE = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "11") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
-#Creamos un nuevo df con los datos obtenidos para poder analizarlo mejor.
-MolestiaVerano = rbind(JUNIO2020, JUNIO2021, JULIO2020, JULIO2021, AGOSTO2020, AGOSTO2021)
+DICIEMBRE = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "12") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
+
+#Los unimos y creamos un nuevo data frame
+MaxMolNoVe = rbind(ENERO,FEBRERO,MARZO,ABRIL,MAYO,SEPTIEMBRE,OCTUBRE,NOVIEMBRE,DICIEMBRE)
+#Añadimos la columna de años y lo convertimos en factor
+MaxMolNoVe = MaxMolNoVe %>% mutate(Mes = c("ENERO","FEBRERO","MARZO","ABRIL","MAYO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE")) %>% mutate(Mes= as.factor(Mes))
+
+#Por ultimo representamos las calles que mas han molestado a los vecinos en los ultimos 3 años
+maxnove =ggplot(MaxMolNoVe, aes(Mes, MaxRuido, color = Calles, size=MaxRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(45,85),name = "Nivel de ruido") 
+maxnove
+#La calle que más ha molestado a los vecinos en la mayoría de meses es Cadiz,3 excepto en Marzo que fue la de Sueca,32.
 
 
-=======
-#6.¿En que mes ha habido mas acumulación de ruido en Ruzafa en cada año?
- 
->>>>>>> 23675c8b6da8d5e455990d66835ae1bb83411c7c
+################################ MENOS MOLESTIA ######################################
+ENERO2 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "1") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
+
+FEBRERO2 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "2") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
+
+MARZO2 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "3") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
+
+ABRIL2 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "4") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
+
+MAYO2 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "5") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
+
+SEPTIEMBRE2 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "9") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
+
+OCTUBRE2 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "10") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
+
+NOVIEMBRE2 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "11") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
+
+DICIEMBRE2 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "12") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
+
+#Los unimos y creamos un nuevo data frame
+MinMolNoVe = rbind(ENERO2,FEBRERO2,MARZO2,ABRIL2,MAYO2,SEPTIEMBRE2,OCTUBRE2,NOVIEMBRE2,DICIEMBRE2)
+#Añadimos la columna de años y lo convertimos en factor
+MinMolNoVe = MinMolNoVe %>% mutate(Mes = c("ENERO","FEBRERO","MARZO","ABRIL","MAYO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE")) %>% mutate(Mes= as.factor(Mes))
+
+#Por ultimo representamos las calles que mas han molestado a los vecinos en los ultimos 3 años
+MinMol =ggplot(MinMolNoVe, aes(Mes, MinRuido, color = Calles, size=MaxRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(20,70),name = "Nivel de ruido") 
+MinMol
+#La calle que menos ha molestado a los vecinos en todos los meses que no son verano ha sido la Calle Genral Prim.
 ```
 
 
