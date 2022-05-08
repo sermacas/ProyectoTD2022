@@ -67,7 +67,7 @@ attach(RUZAFA)
 # Los datos se han reocgido desde 2020-09-17 hasta 2022-04-10
 max(dateObserved)
 min(dateObserved)
-#EL año 2021 esta cmpleto en los otros dos hay muchos menos dias
+#EL año 2021 esta completo en los otros dos hay muchos menos días
 RUZAFA%>%
   group_by(Año = year(dateObserved))%>%summarise(min= min(dateObserved) ,max=    
   max(dateObserved))
@@ -314,7 +314,7 @@ MinMolNoVe = rbind(ENERO2,FEBRERO2,MARZO2,ABRIL2,MAYO2,SEPTIEMBRE2,OCTUBRE2,NOVI
 MinMolNoVe = MinMolNoVe %>% mutate(Mes = c("ENERO","FEBRERO","MARZO","ABRIL","MAYO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE")) %>% mutate(Mes= as.factor(Mes))
 
 #Por ultimo representamos las calles que mas han molestado a los vecinos en los ultimos 3 años
-MinMol =ggplot(MinMolNoVe, aes(Mes, MinRuido, color = Calles, size=MaxRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(20,70),name = "Nivel de ruido") 
+MinMol =ggplot(MinMolNoVe, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(20,70),name = "Nivel de ruido") 
 MinMol
 #La calle que menos ha molestado a los vecinos en todos los meses que no son verano ha sido la Calle Genral Prim.
 ```
@@ -322,13 +322,56 @@ MinMol
 
 PREGUNTA 7
 ```{r}
-#7.¿Que calles son las mas tranquilas para vivir en cada estacion de año?
-#Relacion pearson de marzo 2022 y 2021 y diciembre 2020 y 2021
+#7.¿Que calles son las mas tranquilas para vivir en cada estación del año?
+################################ VERANO ######################################
+#Para el verano tomamos Agosto y junio que son los meses de los que tenemos datos.
+JUNIO2 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "6") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
 
+AGOSTO2 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "8") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
 
+#Los unimos y creamos un nuevo data frame
+MinMolverano = rbind(JUNIO2,AGOSTO2)
+#Añadimos la columna de años y lo convertimos en factor
+MinMolverano = MinMolverano %>% mutate(Mes = c("JUNIO","AGOSTO")) %>% mutate(Mes= as.factor(Mes))
+MinMolverano =ggplot(MinMolverano, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media en verano")+scale_y_continuous(limits = c(20,80),name = "Nivel de ruido") 
+MinMolverano
+#La calle más tranquila para el verano es General Prim.
 
+################################ OTOÑO ######################################
+#Para el otoño tomamos Septiembre, Octubre, Noviembre y Diciembre.
+
+#Los unimos y creamos un nuevo data frame
+MinMolOTOÑO = rbind(SEPTIEMBRE2,OCTUBRE2,NOVIEMBRE2,DICIEMBRE2)
+#Añadimos la columna de años y lo convertimos en factor
+MinMolOTOÑO = MinMolOTOÑO %>% mutate(Mes = c("SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE")) %>% mutate(Mes= as.factor(Mes))
+MinMolOTOÑO =ggplot(MinMolOTOÑO, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media en otoño.")+scale_y_continuous(limits = c(20,80),name = "Nivel de ruido") 
+MinMolOTOÑO
+#La calle más tranquila para el otoño es General Prim.
+
+################################ INVIERNO ######################################
+#Para el invierno tomamos Enero, Febrero y Marzo.
+
+#Los unimos y creamos un nuevo data frame
+MinMolINV = rbind(ENERO2,FEBRERO2,MARZO2)
+#Añadimos la columna de años y lo convertimos en factor
+MinMolINV = MinMolINV %>% mutate(Mes = c("ENERO","FERBREO","MARZO")) %>% mutate(Mes= as.factor(Mes))
+MinMolINV =ggplot(MinMolINV, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media en invierno")+scale_y_continuous(limits = c(20,80),name = "Nivel de ruido") 
+MinMolINV
+#La calle más tranquila para el invierno es General Prim.
+
+################################ PRIMAVERA ######################################
+#Para la primavera tomamos Abril y Mayo.
+
+#Los unimos y creamos un nuevo data frame
+MinMolPRIM = rbind(ABRIL2,MAYO2)
+#Añadimos la columna de años y lo convertimos en factor
+MinMolPRIM = MinMolPRIM %>% mutate(Mes = c("ABRIL","MAYO")) %>% mutate(Mes= as.factor(Mes))
+MinMolPRIM =ggplot(MinMolPRIM, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media en primavera")+scale_y_continuous(limits = c(20,80),name = "Nivel de ruido") 
+MinMolPRIM
+#La calle más tranquila para la primavera es General Prim.
 ```
-
+Conclusión:
+La calle más tranquila para todas las estaciones del año es la Calle General Prim.
 
 PREGUNTA 8
 ```{r}
