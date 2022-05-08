@@ -154,11 +154,20 @@ PUNTO 6
 
 PREGUNTA 1
 ```{r}
+<<<<<<< HEAD
 #1.¿Cuál es la calle que más ha molestado a los vecinos en en los tres ultimos años?¿Y la que menos?
 
 ######################################  LA QUE MAS  #######################################
 
 #Seleccionamos la calle con más ruido de cada año
+=======
+
+#1.¿Cual es la calle que mas ha molestado a los vecinos en en los tres ultimos años?¿Y la que menos?
+
+######################################  LA QUE MAS  #######################################
+
+#Seleccionamos la calle con mas ruido de cada año
+>>>>>>> 23675c8b6da8d5e455990d66835ae1bb83411c7c
 Año2020 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2020") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
 Año2021 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2021") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
@@ -260,6 +269,7 @@ PREGUNTA 5
 
 PREGUNTA 6
 ```{r}
+<<<<<<< HEAD
 #6.#¿Cuál es la calle que más MOLESTÓ a los vecinos en los meses de verano de los dos últimos años?¿Y la que menos?
 
 RUZAFA_TIDY$level=factor(RUZAFA_TIDY$Valores, levels=c("Very Low", "Low", "Medium", "Loud", "Very Loud"))
@@ -291,6 +301,10 @@ AGOSTO2021 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "
 MolestiaVerano = rbind(JUNIO2020, JUNIO2021, JULIO2020, JULIO2021, AGOSTO2020, AGOSTO2021)
 
 
+=======
+#6.¿En que mes ha habido mas acumulación de ruido en Ruzafa en cada año?
+ 
+>>>>>>> 23675c8b6da8d5e455990d66835ae1bb83411c7c
 ```
 
 
@@ -338,8 +352,11 @@ PREGUNTA 12
 #12. Analizar los datos faltantes
 
 ```
+<<<<<<< HEAD
 
 
 
 
+=======
+>>>>>>> 23675c8b6da8d5e455990d66835ae1bb83411c7c
 
