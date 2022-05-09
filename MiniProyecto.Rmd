@@ -215,12 +215,14 @@ RUZAFA_TIDY = cbind(RUZAFA_TIDY, Id_Sensor)
 RUZAFA_TIDY = RUZAFA_TIDY [ , c(1,8,2,3,4,6,7,5)]
 ```
 
+
 # Paso 6
 
 PREGUNTA 1
-```{r}
-#1.¿Cual es la calle que mas ha molestado a los vecinos en en los tres ultimos años?¿Y la que menos?
 
+¿Cual es la calle que mas ha molestado a los vecinos en en los tres ultimos años?¿Y la que menos?
+
+```{r}
 ######################################  LA QUE MAS  #######################################
 
 #Seleccionamos la calle con mas ruido de cada año
@@ -263,21 +265,24 @@ b
 
 PREGUNTA 2
 
+¿En que calle ha incrementado mas el ruido a lo largo del año 2022?
+
 ```{r}
-#2.¿En que calle ha incrementado mas el ruido a lo largo del año 2022?
 RUZAFA_TIDY2 = RUZAFA_TIDY %>% filter(year(Dia_Medicion) == "2022") %>% group_by(Calles)
 RUZAFA_TIDY2 = RUZAFA_TIDY2%>%
               select(Calles, Valores, Dia_Medicion)
 ggplot(RUZAFA_TIDY2, aes(Dia_Medicion, Valores)) + geom_line() + facet_wrap(~Calles)+geom_smooth(method = 'lm')
 
-#SOLUCION: Se puede ver que el nivel Sonoro de cada calle a lo largo de 2022 (enero-marzo) no varía notablemente excepto en el mes de marzo que en todas las calles el nivel aumenta.
-
 ```
 
+SOLUCION: Se puede ver que el nivel Sonoro de cada calle a lo largo de 2022 (enero-marzo) no varía notablemente excepto en el mes de marzo que en todas las calles el nivel aumenta.
+
+
 PREGUNTA 3
+
+¿La sonoridad en Ruzafa ha ido aumentado o disminuyendo a lo largo del tiempo?¿El covid afectó en algo? ¿Y las fallas? ¿Y la Navidad?
+
 ```{r}
-#3.¿La sonoridad en Ruzafa ha ido aumentado o disminuyendo a lo largo del tiempo?
-#¿El covid afectó en algo? ¿Y las fallas? ¿Y la Navidad?
 RUZAFA_TIDY3_1 = RUZAFA_TIDY %>% select(Dia_Medicion, Calles, Valores) %>% group_by(year(Dia_Medicion)) %>% filter(year(Dia_Medicion) == "2020")
 ggplot(RUZAFA_TIDY3_1, aes(Dia_Medicion, Valores, color = month(Dia_Medicion)))+ geom_line() + geom_smooth(color="darkgrey")
 
@@ -291,9 +296,10 @@ ggplot(RUZAFA_TIDY3_3, aes(Dia_Medicion, Valores, color = month(Dia_Medicion)))+
 
 ```
 
+Ahora organizamos el ruido que ha habido por la noche en cada una de las calles y lo mostramos en un gráfico.
+Posteriormente, debemos relacionar el máximo ruido que hubo con la máxima noche de ruido.
+
 ```{r}
-#POR LA NOCHE TODAS LAS CALLES NE UN GRAFICO
-#Relacionar luego max ruido con max noche
 dat = RUZAFA_TIDY %>% filter(Nivel_Sonoro == "Nivel_Sonoro_Noche") 
 
 #COLS = c("gray", "pink", "blue", "#5CB85C", "yellow", "orange", "purple", "black", "turquese", "brown", "green", "red", )
@@ -307,23 +313,29 @@ dat
 
 
 PREGUNTA 4
-```{r}
-#4.¿Que calles han sido las mas ruidosas durante el dia, la tarde, y la noche? ¿Y las que menos?
 
+¿Que calles han sido las mas ruidosas durante el dia, la tarde, y la noche? ¿Y las que menos?
+
+```{r}
 
 ```
 
 PREGUNTA 5
+
+¿Suele haber mas silencio por la tarde o durante el dia en Ruzafa?
+
 ```{r}
-#5.¿Suele haber mas silencio por la tarde o durante el dia en Ruzafa?
 
 ```
 
 PREGUNTA 6
-```{r}
-#¿Cuál es la calle que más MOLESTÓ a los vecinos sin contar los meses de verano? ¿Y la que menos?
-#Suponemos meses de verano como: Junio,Julio y Agosto.
 
+¿Cuál es la calle que más MOLESTÓ a los vecinos sin contar los meses de verano? ¿Y la que menos?
+
+Para este caso vamos a suponer los meses de verano como: Junio, Julio y Agosto.
+Pero primero creamos variables de todos los meses del año en los que se ha guardado información, para así poder usar la información de forma más sencilla.
+
+```{r}
 ################################ MÁS MOLESTIA ######################################
 ENERO = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "1") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
@@ -343,6 +355,7 @@ NOVIEMBRE = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "
 
 DICIEMBRE = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "12") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
+
 #Los unimos y creamos un nuevo data frame
 MaxMolNoVe = rbind(ENERO,FEBRERO,MARZO,ABRIL,MAYO,SEPTIEMBRE,OCTUBRE,NOVIEMBRE,DICIEMBRE)
 #Añadimos la columna de años y lo convertimos en factor
@@ -351,7 +364,6 @@ MaxMolNoVe = MaxMolNoVe %>% mutate(Mes = c("ENERO","FEBRERO","MARZO","ABRIL","MA
 #Por ultimo representamos las calles que mas han molestado a los vecinos en los ultimos 3 años
 maxnove =ggplot(MaxMolNoVe, aes(Mes, MaxRuido, color = Calles, size=MaxRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(45,85),name = "Nivel de ruido") 
 maxnove
-#La calle que más ha molestado a los vecinos en la mayoría de meses es Cadiz,3 excepto en Marzo que fue la de Sueca,32.
 
 
 ################################ MENOS MOLESTIA ######################################
@@ -381,13 +393,17 @@ MinMolNoVe = MinMolNoVe %>% mutate(Mes = c("ENERO","FEBRERO","MARZO","ABRIL","MA
 #Por ultimo representamos las calles que mas han molestado a los vecinos en los ultimos 3 años
 MinMol =ggplot(MinMolNoVe, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(20,70),name = "Nivel de ruido") 
 MinMol
-#La calle que menos ha molestado a los vecinos en todos los meses que no son verano ha sido la Calle Genral Prim.
+
 ```
+
+SOLUCIÓN: La calle que más ha molestado a los vecinos en la mayoría de meses es Cadiz,3 excepto en Marzo que fue la de Sueca,32. Y la calle que menos ha molestado a los vecinos en todos los meses que no son verano ha sido la Calle Genral Prim.
 
 
 PREGUNTA 7
+
+¿Que calles son las mas tranquilas para vivir en cada estación del año?
+
 ```{r}
-#7.¿Que calles son las mas tranquilas para vivir en cada estación del año?
 ################################ VERANO ######################################
 #Para el verano tomamos Agosto y junio que son los meses de los que tenemos datos.
 JUNIO2 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "6") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
@@ -400,7 +416,6 @@ MinMolverano = rbind(JUNIO2,AGOSTO2)
 MinMolverano = MinMolverano %>% mutate(Mes = c("JUNIO","AGOSTO")) %>% mutate(Mes= as.factor(Mes))
 MinMolverano =ggplot(MinMolverano, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media en verano")+scale_y_continuous(limits = c(20,80),name = "Nivel de ruido") 
 MinMolverano
-#La calle más tranquila para el verano es General Prim.
 
 ################################ OTOÑO ######################################
 #Para el otoño tomamos Septiembre, Octubre, Noviembre y Diciembre.
@@ -411,7 +426,7 @@ MinMolOTOÑO = rbind(SEPTIEMBRE2,OCTUBRE2,NOVIEMBRE2,DICIEMBRE2)
 MinMolOTOÑO = MinMolOTOÑO %>% mutate(Mes = c("SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE")) %>% mutate(Mes= as.factor(Mes))
 MinMolOTOÑO =ggplot(MinMolOTOÑO, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media en otoño.")+scale_y_continuous(limits = c(20,80),name = "Nivel de ruido") 
 MinMolOTOÑO
-#La calle más tranquila para el otoño es General Prim.
+
 
 ################################ INVIERNO ######################################
 #Para el invierno tomamos Enero, Febrero y Marzo.
@@ -422,7 +437,7 @@ MinMolINV = rbind(ENERO2,FEBRERO2,MARZO2)
 MinMolINV = MinMolINV %>% mutate(Mes = c("ENERO","FERBREO","MARZO")) %>% mutate(Mes= as.factor(Mes))
 MinMolINV =ggplot(MinMolINV, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media en invierno")+scale_y_continuous(limits = c(20,80),name = "Nivel de ruido") 
 MinMolINV
-#La calle más tranquila para el invierno es General Prim.
+
 
 ################################ PRIMAVERA ######################################
 #Para la primavera tomamos Abril y Mayo.
@@ -433,35 +448,49 @@ MinMolPRIM = rbind(ABRIL2,MAYO2)
 MinMolPRIM = MinMolPRIM %>% mutate(Mes = c("ABRIL","MAYO")) %>% mutate(Mes= as.factor(Mes))
 MinMolPRIM =ggplot(MinMolPRIM, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media en primavera")+scale_y_continuous(limits = c(20,80),name = "Nivel de ruido") 
 MinMolPRIM
-#La calle más tranquila para la primavera es General Prim.
+
 ```
+SOLUCIÓN:
+  La calle más tranquila para el verano es General Prim.
+  La calle más tranquila para el otoño es General Prim.
+  La calle más tranquila para el invierno es General Prim.
+  La calle más tranquila para la primavera es General Prim.
+
 Conclusión:
 La calle más tranquila para todas las estaciones del año es la Calle General Prim.
 
+
 PREGUNTA 8
+
+¿En que calle hay mas ruido los fines de semana en 2022? ¿Hay alguna relacion con la mas ruidosa por la noche?
+
 ```{r}
-#8.¿En que calle hay mas ruido los fines de semana en 2022? ¿Hay alguna relacion con la mas ruidosa por la noche?
 
 ```
 
 
 PREGUNTA 9
+
+¿En que dia de la semana ha habido mas ruido por calle?¿Y en general?
+
 ```{r}
-#9.¿En que dia de la semana ha habido mas ruido por calle?¿Y en general?
 
 ```
 
+
 PREGUNTA 10
+
+Hay que hacer analisis univariante y bivariante
+
 ```{r}
-
-#11. Hay que hacer analisis univariante y bivariante
-
 
 ```
 
 PREGUNTA 11
+
+Analizar los datos faltantes
+
 ```{r}
-#12. Analizar los datos faltantes
 
 ```
 <<<<<<< HEAD
@@ -471,46 +500,4 @@ PREGUNTA 11
 
 =======
 >>>>>>> 23675c8b6da8d5e455990d66835ae1bb83411c7c
-
-
-
-```{r}
-df <- RUZAFA %>% gather(key= "tipo_medida", value = "valor", 6:10)
-
-
-total = df %>% group_by(tipo_medida, Dia_Medicion) %>% 
-  summarise(valor = mean(valor)) %>% 
-  select(Dia_Medicion,tipo_medida,valor)
-
-
-meses = c("enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiempre","octubre","noviembre","diciembre")
-grafico = total %>%
-  #Se añade la columna con el día de la semana
-  mutate(mes_num = month(Dia_Medicion)) %>%
-  #Se utiliza solo el nivel sonoro equivalente
-  filter(tipo_medida == "Nivel_sonoro_continuo_equivalente") %>%
-  #Se elimina la columna dia medición
-  select(-Dia_Medicion) %>%
-  #Se agrupa por dia y el tipo de medida para hacer una columna de valor una media
-  group_by(mes_num, tipo_medida) %>%
-  mutate(valor = mean(valor)) %>%
-  #Se eliminan los repetidos
-  unique() %>%
-  #Se hace una columna con el mes
-  mutate(mes = meses[mes_num]) %>%
-  mutate(mes = factor(mes,ordered = T, levels = meses)) %>%
-  #Se hace el gráfico en función del tipo del mes
-  ggplot(aes(x = mes, y = valor, fill = mes)) + 
-  geom_bar(stat="identity") + 
-  theme(legend.position="none",axis.text.x = element_text(angle = 45,hjust = 1, vjust = 1)) + 
-  coord_cartesian(ylim = c(55,65)) +
-  labs(title = "Distribución del sonido en función del mes", x = "Mes", y = "Nivel sonoro equivalente", caption = "Fijarse en el
-       eje y")
-
-ggplotly(grafico, height = 350, width=600)
-```
-
-
-
-
 
