@@ -7,7 +7,9 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-#LIBRERIAS
+
+# cargamos las librerías necesarias
+
 library(readr)
 library(dplyr)
 library(tidyr)
@@ -15,25 +17,35 @@ library(stringr)
 library(lubridate)
 library(ggplot2)
 library(paletteer)
-#SIGNIFICADO DE LAS VARIABLES --> 
-#recvTime : Fecha en la que se inserto el dato en la plataforma
-#FiwareServicePath : Servicio al que pertenece el sensor
-#EntityType : Tipo de sensor
-#EntityId : Identificador único del sensor
-#LAeq : En este caso el período establecida para este sensor es de 1 minuto
-#LAeq_d: Es un indicador de ruido durante el dia desde las 7 hasta las 19 horas.(12h)
-#LAeq_den: Indice de ruido día-tarde-noche, para determinar la molestia vinculada a la exposición al ruido.
-#LAeq_e: Es un indicador del nivel sonoro durante la tarde desde las 19 hasta las 23 horas.(4h)
-#LAeq_n: Es un indicador del nivel sonoro durante la noche desde las 23 hasta las 7 horas.(8h)
-#Dateobserved: Día al que se refieren las medidas.
+library(plotly)
+
 ```
+
+# Paso 3
+
+Descargamos los ficheros de datos y los almacenamos en una carpeta, llamada 'data'.
+
+
+SIGNIFICADO DE LAS VARIABLES
+
+recvTime : Fecha en la que se inserto el dato en la plataforma
+FiwareServicePath : Servicio al que pertenece el sensor
+EntityType : Tipo de sensor
+EntityId : Identificador único del sensor
+LAeq : En este caso el período establecida para este sensor es de 1 minuto
+LAeq_d: Es un indicador de ruido durante el dia desde las 7 hasta las 19 horas.(12h)
+LAeq_den: Indice de ruido día-tarde-noche, para determinar la molestia vinculada a la exposición al ruido.
+LAeq_e: Es un indicador del nivel sonoro durante la tarde desde las 19 hasta las 23 horas.(4h)
+LAeq_n: Es un indicador del nivel sonoro durante la noche desde las 23 hasta las 7 horas.(8h)
+Dateobserved: Día al que se refieren las medidas.
 
 # Paso 4
 
 Este paso consiste en importar y fusionar todos los datos en un solo dataframe ("RUZAFA"), además debemos realizar una exploración inicial de los datos.
+Para ello vamos a importar todos los ficheros de datos descargados anteriormente, creando una variable con el dataframe de dichos ficheros.
 
 ```{r}
-#IMPORTAR FICHEROS
+# importamos ficheros en data frames
 VivChafCadz <- read_csv("data/ VivonsChaflánCádiz.csv", show_col_types = FALSE)
 Cadiz3 <- read_csv("data/Cadiz3.csv", show_col_types = FALSE)
 Cadiz16 <- read_csv("data/Cadiz16.csv", show_col_types = FALSE)
@@ -50,9 +62,25 @@ Sueca61 <- read_csv("data/Sueca61.csv", show_col_types = FALSE)
 SuecaEsqDenia <- read_csv("data/SuecaEsqDenia.csv", show_col_types = FALSE)
 ```
 
+Para una clara exploración debemos unir los dataframes, creando así uno más grande con toda la información 'RUZAFA'
+
 ```{r}
-#UNION DE FICHEROS
-RUZAFA <- VivChafCadz %>% full_join(Cadiz3) %>%full_join(Cadiz16) %>%full_join(CarlCervChaf) %>% full_join(CarlCerv34) %>% full_join(Cuba3) %>% full_join(DoctorSerrano21) %>% full_join(GeneralPrim)  %>% full_join(PuertoRico21) %>% full_join(SalvAbrilChaf)%>% full_join(Sueca2 )%>% full_join(Sueca32) %>% full_join(Sueca61) %>% full_join(SuecaEsqDenia)
+# unimos los data frames
+RUZAFA <- VivChafCadz %>% 
+  full_join(Cadiz3) %>%
+  full_join(Cadiz16) %>%
+  full_join(CarlCervChaf) %>% 
+  full_join(CarlCerv34) %>% 
+  full_join(Cuba3) %>% 
+  full_join(DoctorSerrano21) %>% 
+  full_join(GeneralPrim)  %>% 
+  full_join(PuertoRico21) %>% 
+  full_join(SalvAbrilChaf)%>% 
+  full_join(Sueca2 )%>% 
+  full_join(Sueca32) %>% 
+  full_join(Sueca61) %>% 
+  full_join(SuecaEsqDenia)
+
 View(RUZAFA)
 
 ```
@@ -64,22 +92,28 @@ names(RUZAFA)
 summary(RUZAFA)
 str(RUZAFA)
 attach(RUZAFA)
+
 # Los datos se han reocgido desde 2020-09-17 hasta 2022-04-10
+
 max(dateObserved)
 min(dateObserved)
 #EL año 2021 esta completo en los otros dos hay muchos menos días
+
 RUZAFA%>%
   group_by(Año = year(dateObserved))%>%summarise(min= min(dateObserved) ,max=    
   max(dateObserved))
+
 #solo hay un tipo de sensor y servicio al que pertencen. 
+
 table(entityType)
 table(fiwareServicePath)
+
 #Algunas calles tienen mas datos de sonoridad que otras y una no tiene datos para 2022
+
 table(entityId)
 ggplot(RUZAFA, aes(entityId, fill =factor(year(dateObserved)))) + geom_bar() +theme(axis.text.x = element_text(angle = 90, hjust = 1))+labs(x="Calles",y = "dias", title="Dias de estudio por calle") + guides(fill = guide_legend(title = "Años"))
 detach(RUZAFA)
 
-#
 ```
 
 Posibles preguntas que se pueden plantear y se pueden resolver con los datos proporcionados.
@@ -150,7 +184,7 @@ RUZAFA_TIDY = cbind(RUZAFA_TIDY, Id_Sensor)
 RUZAFA_TIDY = RUZAFA_TIDY [ , c(1,8,2,3,4,6,7,5)]
 ```
 
-PUNTO 6
+# Paso 6
 
 PREGUNTA 1
 ```{r}
@@ -406,4 +440,46 @@ PREGUNTA 11
 
 =======
 >>>>>>> 23675c8b6da8d5e455990d66835ae1bb83411c7c
+
+
+
+```{r}
+df <- RUZAFA %>% gather(key= "tipo_medida", value = "valor", 6:10)
+
+
+total = df %>% group_by(tipo_medida, Dia_Medicion) %>% 
+  summarise(valor = mean(valor)) %>% 
+  select(Dia_Medicion,tipo_medida,valor)
+
+
+meses = c("enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiempre","octubre","noviembre","diciembre")
+grafico = total %>%
+  #Se añade la columna con el día de la semana
+  mutate(mes_num = month(Dia_Medicion)) %>%
+  #Se utiliza solo el nivel sonoro equivalente
+  filter(tipo_medida == "Nivel_sonoro_continuo_equivalente") %>%
+  #Se elimina la columna dia medición
+  select(-Dia_Medicion) %>%
+  #Se agrupa por dia y el tipo de medida para hacer una columna de valor una media
+  group_by(mes_num, tipo_medida) %>%
+  mutate(valor = mean(valor)) %>%
+  #Se eliminan los repetidos
+  unique() %>%
+  #Se hace una columna con el mes
+  mutate(mes = meses[mes_num]) %>%
+  mutate(mes = factor(mes,ordered = T, levels = meses)) %>%
+  #Se hace el gráfico en función del tipo del mes
+  ggplot(aes(x = mes, y = valor, fill = mes)) + 
+  geom_bar(stat="identity") + 
+  theme(legend.position="none",axis.text.x = element_text(angle = 45,hjust = 1, vjust = 1)) + 
+  coord_cartesian(ylim = c(55,65)) +
+  labs(title = "Distribución del sonido en función del mes", x = "Mes", y = "Nivel sonoro equivalente", caption = "Fijarse en el
+       eje y")
+
+ggplotly(grafico, height = 350, width=600)
+```
+
+
+
+
 
