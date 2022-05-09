@@ -388,21 +388,13 @@ PREGUNTA 9
 
 PREGUNTA 10
 ```{r}
-#10.¿En que dia de la semana ha habido mas ruido por calle?¿Y en general?
+
+#11. Hay que hacer analisis univariante y bivariante
 
 
 ```
 
 PREGUNTA 11
-
-```{r}
-
-#11. Hayq ue hacer analisis univariante y bivariante
-
-
-```
-
-PREGUNTA 12
 ```{r}
 #12. Analizar los datos faltantes
 
