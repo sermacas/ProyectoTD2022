@@ -507,7 +507,6 @@ ruido_calle <- RUZAFA_TIDY %>%
   mutate(dia = factor(weekdays(Dia_Medicion), ordered = T)) %>%
   select(-Dia_Medicion) %>% # eliminamos columna Dia_Medicion
   group_by(dia,Valores) %>% # agrupamos por dia y valor de ruido
-  #mutate(valor = sum(Valores), group_by(Dia_Medicion)) %>%
   mutate(valor = mean(Valores)) %>% # columna con la media de valores
   unique() # eliminamos los valores repetidos
 
@@ -515,9 +514,8 @@ ruido_calle <- RUZAFA_TIDY %>%
 ggplot(ruido_calle, aes(x = Calles, y = valor, group = dia, color = dia)) + 
   geom_point() + geom_smooth() + 
   theme(axis.text.x = element_text(angle = 90)) +
-  labs(title = "Nivel sonoro según el día de la semana", 
+  labs(title = "Nivel sonoro", 
        subtitle = "Nivel sonoro según el día de la semana y ordenado por las calles.")
-
 ```
 
 Con el gráfico que representa el nivel sonoro según el día de la semana ordenado por calles, podemos ver para cada calle, el día y el valor del nivel sonoro.
@@ -529,8 +527,9 @@ Para cada día de la semana:
   Viernes - Sueca 2
   Sabado - Cadiz 3, Carles Cervera 34, Cuba 3, Doctor Serrano 21, General Prim, Puerto Rico 21, Salvador Abril Chaflán, Sueca 32, Sueca 61, Sueca Esquina Denia
   Domingo - Carles Cervera Chaflán
-
-
+  
+  
+Vamos a hacer otra representación para ver los niveles sonoros de cada calle según el día.
 
 ```{r}
 datos_semana <- RUZAFA_TIDY %>% 
@@ -547,10 +546,29 @@ ggplot(datos_semana, aes(x = dia, y = Valores, color = Calles)) +
   facet_wrap(~Calles) + theme(axis.text.x = element_text(angle = 90))
 
 ```
+
 De esta manera, aunque no sea una representación muy clara, fijandonos en los picos podemos ver, dependiendo de la calle, que día ha tenido un nivel sonoro mayor.
 
 Y se puede ver claramente que en la calle "Carles Cervera Chaflán" hubo un nivel sonoro muy alto el domingo.
 Luego podemos ver que en las siguientes calles; "Carles Cervera 34", "General Prim" y "Carles Cervera Chaflán", el nivel sonoro el sabado era muy alto.
+
+Mirando la representación de una forma más general, podemos ver claramente que la calle "Sueca 2" es la que tiene los niveles sonoros más bajos, y la calle "Carles Cervantes Chaflán" la que tiene los niveles sonoros más altos.
+
+
+Ahora vamos a ver la representación del nivel sonoro durante la semana sin tener en cuenta las calles.
+Vamos a utilizar una representación boxplot.
+
+```{r}
+ggplot(ruido_calle, aes(x = dia, y = valor, color = dia)) + 
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = "Nivel sonoro según el día de la semana", 
+       subtitle = "Nivel sonoro según el día de la semana y ordenado por las calles.")
+
+```
+
+Podemos ver que el día en el que la sonoridad llega a el nivel más alto es el domingo, pero en general, el día que tiene los niveles sonoros más altos es el sábado.
+
 
 
 PREGUNTA 10
