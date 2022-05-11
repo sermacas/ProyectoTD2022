@@ -87,44 +87,101 @@ View(RUZAFA)
 ```
 
 Vamos a realizar la primera exploración inicial. 
-Para ello vamos a ver sus dimensiones, nombres de variables, mayor y menos fecha observada...
+Para ello vamos a ver sus dimensiones, nombres de variables, mayor y menor fecha observada...
 
 ```{r}
-# exploración inicial
+#Exploraion inicial
+
 dim(RUZAFA)
 names(RUZAFA)
-summary(RUZAFA)
-str(RUZAFA)
+
 attach(RUZAFA)
 
 max(dateObserved)
 min(dateObserved)
 
-RUZAFA%>%
-  group_by(Año = year(dateObserved))%>%
-  summarise(min= min(dateObserved) ,max = max(dateObserved))
-
 table(entityType)
 table(fiwareServicePath)
-
-# realizamos un gráfico para ver de manera más visual la información sobre los
-# días de estudio y las calles
 table(entityId)
-ggplot(RUZAFA, aes(entityId, fill =factor(year(dateObserved)))) + geom_bar() +theme(axis.text.x = element_text(angle = 90, hjust = 1))+labs(x="Calles",y = "dias", title="Dias de estudio por calle") + guides(fill = guide_legend(title = "Años"))
+
 detach(RUZAFA)
 
 ```
 
-Mediante estas funciones hemos observado varias cosas a destacar sobre la información.
+Mediante estas funciones hemos observado varias cosas a destacar sobre la información:
 
-Como por ejemplo, vemos que solo hay un tipo de sensor y servicio al que pertencen los datos.
+DIMENSIONES RUZAFA -->
+   - Columnas = 11
+   - Filas = 6450
+   
+NOMBRES VARIABLES DE RUZAFA : 
+(id, recvTime,fiwareServicePath,entityType,entityI,LAeq,LAeq_d,LAeq_den,LAeq_e,LAeq_n,
+dateObserved)
 
-Utilizando las funciones $max()$ y $min()$ vemos que los datos se han recogido desde 2020-09-17 hasta 2022-04-10.
+MAXIMA FECHA OBSERVADA: 2022-04-10
+MINIMA FECHA OBSERVADA: 2020-09-17
 
-Tambiém vemos que el año 2021 esta completo, es decir, la última fecha en la que se ha recogido información es el último día del año. Mientras que en los otros dos, 2020 y 2022, la última recogida de información no es el último día del año.
+DATOS DISPONIBLES DE CADA CALLE -->
 
-Por último, gracias al gráfico vemos que en una calle de las registradas no hay información sobre el año 2022.
+T248652-daily: 469
+T248655-daily: 476
+T248661-daily: 483
+T248669-daily: 488
+T248670-daily: 464 
+T248671-daily: 475
+T248672-daily: 465
+T248676-daily: 460 
+T248677-daily: 476 
+T248678-daily: 487 
+T248680-daily: 454 
+T248682-daily: 447
+T248683-daily: 327
+T248684-daily: 479 
 
+DISTINTOS TIPOS DE SENSOR : 1
+DISTINTOS TIPOS DE SERVIVIOS A LOS QUE PERTENECEN LOS SENSORES: 1
+
+
+```{r}
+#Analizamos si los años estan compeltos o a alguno le falta algun dato
+RUZAFA%>%
+  group_by(Año = year(dateObserved))%>%
+  summarise(min= min(dateObserved) ,max = max(dateObserved))
+```
+
+Vemos que el año 2021 esta completo, es decir, la última fecha en la que se ha recogido información es el último día del año. Mientras que en 2020 empezamos a recolectar los datos desde Septiembre y en 2022 no tenemos más datos a partir de abril.
+
+```{r}
+#Hacemos una tabla con el resumen de las variables numericas
+RUZAFA1= pivot_wider(RUZAFA)
+RUZAFA1 = RUZAFA1 %>% select(starts_with("LA"))
+
+summary = summary(RUZAFA1)
+SUMMARY = data.frame(summary)
+SUMMARY = SUMMARY %>% separate(Freq, into = c("Medida", "Valor"), sep= ":")
+SUMMARY = pivot_wider(SUMMARY, names_from = Medida, values_from = Valor)
+SUMMARY = SUMMARY %>% select(-Var1) 
+SUMMARY
+```
+
+LLama la atencion que en algunos valores pone "Inf", esto es debido a que como aun no hemos "limpiado" nuestros datos, hay valores incorrectos que deben de ser sustituidos.
+
+Con los datos que tenemos parece ser que el menor nivel sonoro registrado fue por la noche y el mayor durante el dia,tarde y noche. Y haciendo las medias de cada nivel sonoro parece que los mayores niveles los ha registrado el sensor de dia, tarde, noche, pero no podemos estar seguros hasta que no limpiemos nuestros datos.
+
+
+
+```{r}
+#Realizamos un gráfico para ver de manera más visual la información sobre los
+#días de estudio y las calles
+
+ggplot(RUZAFA, aes(entityId, fill =factor(year(dateObserved)))) + 
+geom_bar() + 
+theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+labs(x="Calles",y = "dias", title="Dias de estudio por calle") +
+guides(fill = guide_legend(title = "Años"))
+
+```
+Por último, gracias al gráfico vemos que en una calle de las registradas no hay información sobre el año 2022. Y que no todas als calles tienen el minmo numero de datos para el año 2020 y 2021, sin embargo para 2022 si.
 
 - PREGUNTAS:
 HILO DE LA PRESENTACION-->
@@ -389,7 +446,7 @@ Observando la gráfica, podemos ver que la calle que más ha molestado a los vec
 
 Realizamos los mismos pasos que en el apartado anterior, esta vez mirando los datos mínimos.
 ```{r}
-ENERO2O2 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "1") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
+ENERO2 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "1") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
 
 FEBRERO2 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(month(Dia_Medicion) == "2") %>% summarise(MinRuido = mean(Valores)) %>% filter(MinRuido == min(MinRuido))
 
@@ -413,7 +470,7 @@ MinMolNoVe = rbind(ENERO2,FEBRERO2,MARZO2,ABRIL2,MAYO2,SEPTIEMBRE2,OCTUBRE2,NOVI
 MinMolNoVe = MinMolNoVe %>% mutate(Mes = c("ENERO","FEBRERO","MARZO","ABRIL","MAYO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE")) %>% mutate(Mes= as.factor(Mes))
 
 #Por último representamos las calles que menos han molestado a los vecinos en los meses de no verano.
-MinMol =ggplot(MinMolNoVe, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(20,70),name = "Nivel de ruido") 
+MinMol =ggplot(MinMolNoVe, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 2, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(20,70),name = "Nivel de ruido") 
 MinMol
 ```
 
@@ -508,6 +565,29 @@ PREGUNTA 10
 Hay que hacer analisis univariante y bivariante
 
 ```{r}
+#Matriz de covarianza de todos los niveles sonosoros para ver cuales tienen mas relacion entre si
+
+#Usamos pivot wider poner de nuevo en columnas los niveles sonoros y poder ver el nivel de relacion entre  las variables
+
+a = pivot_wider(RUZAFA_TIDY,names_from = "Nivel_Sonoro", values_from = "Valores" )
+
+Datos <- select(a, starts_with("Nivel"))
+b = cor(Datos, method="pearson")
+data.frame(b)
+View(b)
+cor(a$Nivel_Sonoro_Noche,a$Nivel_Sonoro_Dia, method = "pearson")
+cor(a$Nivel_Sonoro_Tarde, a$Nivel_Sonoro_Dia, method = "pearson")
+
+
+#Vemso que el continuo tiene mas relacion con los valores de sonido de por el dia, y el que menos por la noche
+cor(a$Nivel_Sonoro_Continuo, a$Nivel_Sonoro_Dia, method= "pearson")
+cor(a$Nivel_Sonoro_Continuo, a$Nivel_Sonoro_Noche, method= "pearson")
+cor(a$Nivel_Sonoro_Continuo, a$Nivel_Sonoro_Tarde, method= "pearson")
+
+library(GGally)
+ggcorr(b, palette = "Pastel 2 ", color = 1:5, label = T, method = c("everything", "pearson"))
+
+
 
 ```
 
