@@ -76,7 +76,7 @@ table(entityType)
 table(fiwareServicePath)
 #Algunas calles tienen mas datos de sonoridad que otras y una no tiene datos para 2022
 table(entityId)
-ggplot(RUZAFA, aes(entityId, fill =factor(year(dateObserved)))) + geom_bar() +theme(axis.text.x = element_text(angle = 90, hjust = 1))+labs(x="Calles",y = "dias", title="Dias de estudio por calle") + guides(fill = guide_legend(title = "Años"))
+ggplot(RUZAFA, aes(entityId, fill =factor(year(dateObserved)))) + geom_bar(position = "dodge") +theme(axis.text.x = element_text(angle = 90, hjust = 1))+labs(x="Calles",y = "dias", title="Dias de estudio por calle") + guides(fill = guide_legend(title = "Años"))
 detach(RUZAFA)
 
 #
