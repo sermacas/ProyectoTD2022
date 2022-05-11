@@ -169,7 +169,6 @@ LLama la atencion que en algunos valores pone "Inf", esto es debido a que como a
 Con los datos que tenemos parece ser que el menor nivel sonoro registrado fue por la noche y el mayor durante el dia,tarde y noche. Y haciendo las medias de cada nivel sonoro parece que los mayores niveles los ha registrado el sensor de dia, tarde, noche, pero no podemos estar seguros hasta que no limpiemos nuestros datos.
 
 
-
 ```{r}
 #Realizamos un gráfico para ver de manera más visual la información sobre los
 #días de estudio y las calles
@@ -181,6 +180,7 @@ labs(x="Calles",y = "dias", title="Dias de estudio por calle") +
 guides(fill = guide_legend(title = "Años"))
 
 ```
+
 Por último, gracias al gráfico vemos que en una calle de las registradas no hay información sobre el año 2022. Y que no todas als calles tienen el minmo numero de datos para el año 2020 y 2021, sin embargo para 2022 si.
 
 - PREGUNTAS:
