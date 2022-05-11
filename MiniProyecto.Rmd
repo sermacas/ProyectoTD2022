@@ -509,18 +509,48 @@ ruido_calle <- RUZAFA_TIDY %>%
   group_by(dia,Valores) %>% # agrupamos por dia y valor de ruido
   #mutate(valor = sum(Valores), group_by(Dia_Medicion)) %>%
   mutate(valor = mean(Valores)) %>% # columna con la media de valores
-  unique() %>% # eliminamos los valores repetidos
-  ggplot(aes(x = Calles, y = valor, group = dia, color = dia)) +
-  geom_point() + 
-  geom_smooth() +
+  unique() # eliminamos los valores repetidos
+
+
+# representación boxplot
+ggplot(ruido_calle, aes(x = dia, y = valor, group = Calles, color = Calles)) + 
+  geom_boxplot() +
   theme(axis.text.x = element_text(angle = 90)) +
   labs(title = "Nivel sonoro según el día de la semana", 
-  subtitle = "Nivel sonoro según el día de la semana y ordenado por las calles.")
+       subtitle = "Nivel sonoro según el día de la semana y ordenado por las calles.")
 
-ruido_calle
 
+# representación por puntos
+ggplot(ruido_calle, aes(x = Calles, y = valor, group = dia, color = dia)) + 
+  geom_point() + geom_smooth() + 
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = "Nivel sonoro según el día de la semana", 
+       subtitle = "Nivel sonoro según el día de la semana y ordenado por las calles.")
 
 ```
+
+Con el gráfico que representa el nivel sonoro según el día de la semana ordenado por calles, podemos ver para cada calle, el día y el valor del nivel sonoro.
+
+
+```{r}
+datos_semana <- RUZAFA_TIDY %>% 
+  mutate(dia = weekdays(Dia_Medicion))%>%
+  mutate(hora = Hora_Registro)
+  
+
+ggplot(datos_semana, aes(x = dia, y = Valores, color = Calles)) + 
+  geom_line(position = "jitter") + 
+  scale_color_discrete(labels = c("Calle 1", "Calle 2",  "Calle 3",  "Calle 4",  
+                                  "Calle 5",  "Calle 6",  "Calle 7",  "Calle 8",  
+                                  "Calle 9",  "Calle 10",  "Calle 11",  "Calle 12",  
+                                  "Calle 13",  "Calle 14" )) + 
+  facet_wrap(~Calles) + theme(axis.text.x = element_text(angle = 90))
+
+```
+De esta manera, aunque no sea una representación muy clara, fijandonos en los picos podemos ver, dependiendo de la calle, que día ha tenido un nivel sonoro mayor.
+
+Y se puede ver claramente que en la calle "Carles Cervera Chaflán" hubo un nivel sonoro muy alto el lunes.
+Luego podemos ver que en las siguientes calles; "Carles Cervera 34", "General Prim", Vivon Chaflán Cadiz" y "Carles Cervera Chaflán", el nivel sonoro el sabado era muy alto.
 
 
 PREGUNTA 10
