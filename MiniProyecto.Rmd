@@ -542,25 +542,87 @@ La calle más tranquila para la primavera es General Prim.
 
 En general y en concordancia con lo estudiado anteriormente, la calle más tranquila para todas las estaciones del año es la Calle General Prim.
 
+
 PREGUNTA 8
-
-¿En qué calle hay mas ruido los fines de semana en 2022? ¿Hay alguna relacion con la más ruidosa por la noche?
-
-```{r}
-
-```
-
-
-PREGUNTA 9
 
 ¿Qué día de la semana hubo más ruido por calle?¿Y en general?
 
 ```{r}
+dias = c("lunes","martes","miercoles","jueves","viernes","sabado","domingo")
+
+ruido_calle <- RUZAFA_TIDY %>%
+  mutate(dia = weekdays(Dia_Medicion))%>% # columna con los días de la semana
+  mutate(dia = factor(weekdays(Dia_Medicion), ordered = T)) %>%
+  select(-Dia_Medicion) %>% # eliminamos columna Dia_Medicion
+  group_by(dia,Valores) %>% # agrupamos por dia y valor de ruido
+  mutate(valor = mean(Valores)) %>% # columna con la media de valores
+  unique() # eliminamos los valores repetidos
+
+# representación por puntos
+ggplot(ruido_calle, aes(x = Calles, y = valor, group = dia, color = dia)) + 
+  geom_point() + geom_smooth() + 
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = "Nivel sonoro", 
+       subtitle = "Nivel sonoro según el día de la semana y ordenado por las calles.")
+```
+
+Con el gráfico que representa el nivel sonoro según el día de la semana ordenado por calles, podemos ver para cada calle, el día y el valor del nivel sonoro.
+Para cada día de la semana:
+  Lunes - (nada)
+  Martes - (nada)
+  Miercoles - Vivon Chaflán Cadiz
+  Jueves - cadiz 16
+  Viernes - Sueca 2
+  Sabado - Cadiz 3, Carles Cervera 34, Cuba 3, Doctor Serrano 21, General Prim, Puerto Rico 21, Salvador Abril Chaflán, Sueca 32, Sueca 61, Sueca Esquina Denia
+  Domingo - Carles Cervera Chaflán
+  
+  
+Vamos a hacer otra representación para ver los niveles sonoros de cada calle según el día.
+Esta vez, separandolo por facetas.
+
+```{r}
+datos_semana <- RUZAFA_TIDY %>% 
+  mutate(dia = weekdays(Dia_Medicion))%>%
+  mutate(dia = factor(weekdays(Dia_Medicion),ordered = T))
+  
+
+ggplot(datos_semana, aes(x = dia, y = Valores, color = Calles)) + 
+  geom_line(position = "jitter") + 
+  scale_color_discrete(labels = c("Calle 1", "Calle 2",  "Calle 3",  "Calle 4",  
+                                  "Calle 5",  "Calle 6",  "Calle 7",  "Calle 8",  
+                                  "Calle 9",  "Calle 10",  "Calle 11",  "Calle 12",  
+                                  "Calle 13",  "Calle 14" )) + 
+  facet_wrap(~Calles) + theme(axis.text.x = element_text(angle = 90))
 
 ```
 
+De esta manera, aunque no sea una representación muy clara, fijandonos en los picos podemos ver, dependiendo de la calle, que día ha tenido un nivel sonoro mayor. 
+Esta representación es muy útil a la hora de ver las variaciones de niveles sonoros a lo largo de los días.
 
-PREGUNTA 10
+Y se puede ver claramente que en la calle "Carles Cervera Chaflán" hubo un nivel sonoro muy alto el domingo.
+Luego podemos ver que en las siguientes calles; "Carles Cervera 34", "General Prim" y "Carles Cervera Chaflán", el nivel sonoro el sabado era muy alto.
+
+Mirando la representación de una forma más general, podemos ver claramente que la calle "Sueca 2" es la que tiene los niveles sonoros más bajos, y la calle "Carles Cervantes Chaflán" la que tiene los niveles sonoros más altos.
+
+
+Ahora vamos a ver la representación del nivel sonoro durante la semana sin tener en cuenta las calles.
+Vamos a utilizar una representación boxplot.
+
+```{r}
+ggplot(ruido_calle, aes(x = dia, y = Valores, color = dia)) + 
+  #geom_boxplot() +
+  geom_col(position = "stack") +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = "Nivel sonoro según el día de la semana", 
+       subtitle = "Nivel sonoro según el día de la semana y ordenado por las calles.")
+
+```
+
+Podemos ver que el día que tiene los niveles sonoros más altos es el sábado.
+
+
+
+PREGUNTA 9
 
 Hay que hacer analisis univariante y bivariante
 
@@ -591,7 +653,7 @@ ggcorr(b, palette = "Pastel 2 ", color = 1:5, label = T, method = c("everything"
 
 ```
 
-PREGUNTA 11
+PREGUNTA 10
 
 Analizar los datos faltantes
 
@@ -605,4 +667,5 @@ Analizar los datos faltantes
 
 =======
 >>>>>>> 23675c8b6da8d5e455990d66835ae1bb83411c7c
+
 
