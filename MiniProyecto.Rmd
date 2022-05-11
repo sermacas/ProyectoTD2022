@@ -499,6 +499,26 @@ PREGUNTA 9
 ¿Qué día de la semana hubo más ruido por calle?¿Y en general?
 
 ```{r}
+dias = c("lunes","martes","miercoles","jueves","viernes","sabado","domingo")
+
+ruido_calle <- RUZAFA_TIDY %>%
+  #gather(key= "tipo_medida", value = "Valores", 6:10) %>%
+  mutate(dia = weekdays(Dia_Medicion))%>% # columna con los días de la semana
+  mutate(dia = factor(weekdays(Dia_Medicion), ordered = T, levels = dias)) %>%
+  select(-Dia_Medicion) %>% # eliminamos columna Dia_Medicion
+  group_by(dia,Valores) %>% # agrupamos por dia y valor de ruido
+  #mutate(valor = sum(Valores), group_by(Dia_Medicion)) %>%
+  mutate(valor = mean(Valores)) %>% # columna con la media de valores
+  unique() %>% # eliminamos los valores repetidos
+  ggplot(aes(x = Calles, y = valor, group = dia, color = dia)) +
+  geom_point() + 
+  geom_smooth() +
+  theme(axis.text.x = element_text(angle = 90)) +
+  labs(title = "Nivel sonoro según el día de la semana", 
+  subtitle = "Nivel sonoro según el día de la semana y ordenado por las calles.")
+
+ruido_calle
+
 
 ```
 
@@ -525,4 +545,5 @@ Analizar los datos faltantes
 
 =======
 >>>>>>> 23675c8b6da8d5e455990d66835ae1bb83411c7c
+
 
