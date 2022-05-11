@@ -547,7 +547,8 @@ ggplot(datos_semana, aes(x = dia, y = Valores, color = Calles)) +
 
 ```
 
-De esta manera, aunque no sea una representación muy clara, fijandonos en los picos podemos ver, dependiendo de la calle, que día ha tenido un nivel sonoro mayor.
+De esta manera, aunque no sea una representación muy clara, fijandonos en los picos podemos ver, dependiendo de la calle, que día ha tenido un nivel sonoro mayor. 
+Esta representación es muy útil a la hora de ver las variaciones de niveles sonoros a lo largo de los días.
 
 Y se puede ver claramente que en la calle "Carles Cervera Chaflán" hubo un nivel sonoro muy alto el domingo.
 Luego podemos ver que en las siguientes calles; "Carles Cervera 34", "General Prim" y "Carles Cervera Chaflán", el nivel sonoro el sabado era muy alto.
