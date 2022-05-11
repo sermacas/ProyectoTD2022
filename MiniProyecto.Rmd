@@ -511,15 +511,6 @@ ruido_calle <- RUZAFA_TIDY %>%
   mutate(valor = mean(Valores)) %>% # columna con la media de valores
   unique() # eliminamos los valores repetidos
 
-
-# representación boxplot
-ggplot(ruido_calle, aes(x = dia, y = valor, group = Calles, color = Calles)) + 
-  geom_boxplot() +
-  theme(axis.text.x = element_text(angle = 90)) +
-  labs(title = "Nivel sonoro según el día de la semana", 
-       subtitle = "Nivel sonoro según el día de la semana y ordenado por las calles.")
-
-
 # representación por puntos
 ggplot(ruido_calle, aes(x = Calles, y = valor, group = dia, color = dia)) + 
   geom_point() + geom_smooth() + 
@@ -538,6 +529,7 @@ Para cada día de la semana:
   Viernes - Sueca 2
   Sabado - Cadiz 3, Carles Cervera 34, Cuba 3, Doctor Serrano 21, General Prim, Puerto Rico 21, Salvador Abril Chaflán, Sueca 32, Sueca 61, Sueca Esquina Denia
   Domingo - Carles Cervera Chaflán
+
 
 
 ```{r}
