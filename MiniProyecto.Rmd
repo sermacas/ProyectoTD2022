@@ -95,20 +95,9 @@ Para ello vamos a ver sus dimensiones, nombres de variables, mayor y menor fecha
 ```{r, include = FALSE}
 #Dimension de df, nombre de variables, max y min fecha cantidad de distintos tipos de variables
 
-
-<<<<<<< HEAD
-```{r}
-# exploración inicial
-
-dim(RUZAFA) # dimensiones
-names(RUZAFA) # nombres de variables
-summary(RUZAFA) # resumen del dataframe
-str(RUZAFA)
-=======
 dim(RUZAFA)
 names(RUZAFA)
 
->>>>>>> 390cfb33d55e48d56bc00cffcc3c6f7d080e3dd6
 attach(RUZAFA)
 
 max(dateObserved) # última fecha
@@ -117,16 +106,7 @@ min(dateObserved) # primera fecha
 table(entityType)
 table(fiwareServicePath)
 table(entityId)
-<<<<<<< HEAD
-```
 
-Realizamos un gráfico para ver de manera más visual la información sobre los días de estudio de cada calles, diferenciando los años de los datos con colores.
-
-```{r}
-ggplot(RUZAFA, aes(entityId, fill =factor(year(dateObserved)))) + geom_bar() +theme(axis.text.x = element_text(angle = 90, hjust = 1))+labs(x="Calles",y = "dias", title="Dias de estudio por calle") + guides(fill = guide_legend(title = "Años"))
-=======
-
->>>>>>> 390cfb33d55e48d56bc00cffcc3c6f7d080e3dd6
 detach(RUZAFA)
 
 ```
@@ -164,6 +144,14 @@ T248684-daily: 479
 DISTINTOS TIPOS DE SENSOR : 1
 DISTINTOS TIPOS DE SERVIVIOS A LOS QUE PERTENECEN LOS SENSORES: 1
 
+Realizamos un gráfico para ver de manera más visual la información sobre los días de estudio de cada calles, diferenciando los años de los datos con colores.
+
+```{r}
+ggplot(RUZAFA, aes(entityId, fill =factor(year(dateObserved)))) + geom_bar() +theme(axis.text.x = element_text(angle = 90, hjust = 1))+labs(x="Calles",y = "dias", title="Dias de estudio por calle") + guides(fill = guide_legend(title = "Años"))
+
+
+```
+Gracias al gráfico vemos que en una calle de las registradas no hay información sobre el año 2022. Y que no todas als calles tienen el minmo numero de datos para el año 2020 y 2021, sin embargo para 2022 si.
 
 ```{r}
 #Analizamos si los años estan compeltos o a alguno le falta algun dato
@@ -191,20 +179,6 @@ LLama la atencion que en algunos valores pone "Inf", esto es debido a que como a
 
 Con los datos que tenemos parece ser que el menor nivel sonoro registrado fue por la noche y el mayor durante el dia,tarde y noche. Y haciendo las medias de cada nivel sonoro parece que los mayores niveles los ha registrado el sensor de dia, tarde, noche, pero no podemos estar seguros hasta que no limpiemos nuestros datos.
 
-
-```{r}
-#Realizamos un gráfico para ver de manera más visual la información sobre los
-#días de estudio y las calles
-
-ggplot(RUZAFA, aes(entityId, fill =factor(year(dateObserved)))) + 
-geom_bar() + 
-theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-labs(x="Calles",y = "dias", title="Dias de estudio por calle") +
-guides(fill = guide_legend(title = "Años"))
-
-```
-
-Gracias al gráfico vemos que en una calle de las registradas no hay información sobre el año 2022. Y que no todas als calles tienen el minmo numero de datos para el año 2020 y 2021, sin embargo para 2022 si.
 
 
 # Planteamos preguntas a resolver
@@ -791,12 +765,6 @@ ggcorr(b, palette = "Pastel 2 ", color = 1:5, label = T, method = c("everything"
 ```{r}
 
 ```
-<<<<<<< HEAD
 
-
-
-
-=======
->>>>>>> 23675c8b6da8d5e455990d66835ae1bb83411c7c
 
 
