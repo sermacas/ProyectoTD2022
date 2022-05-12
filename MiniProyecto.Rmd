@@ -18,6 +18,7 @@ library(lubridate)
 library(ggplot2)
 library(paletteer)
 library(plotly)
+library(GGally)
 
 ```
 
@@ -65,7 +66,7 @@ SuecaEsqDenia <- read_csv("data/SuecaEsqDenia.csv", show_col_types = FALSE)
 
 Para una clara exploración debemos unir los dataframes, creando así uno más grande con toda la información, en este caso 'RUZAFA'.
 
-```{r}
+```{r,include=FALSE}
 # unimos los data frames
 RUZAFA <- VivChafCadz %>% 
   full_join(Cadiz3) %>%
@@ -89,8 +90,13 @@ View(RUZAFA)
 ## Exploración inicial
 
 Vamos a realizar la primera exploración inicial. 
-Para ello vamos a ver sus dimensiones, nombres de variables, mayor y menos fecha observada...
+Para ello vamos a ver sus dimensiones, nombres de variables, mayor y menor fecha observada, resumen de los datos numericos...
 
+```{r, include = FALSE}
+#Dimension de df, nombre de variables, max y min fecha cantidad de distintos tipos de variables
+
+
+<<<<<<< HEAD
 ```{r}
 # exploración inicial
 
@@ -98,37 +104,107 @@ dim(RUZAFA) # dimensiones
 names(RUZAFA) # nombres de variables
 summary(RUZAFA) # resumen del dataframe
 str(RUZAFA)
+=======
+dim(RUZAFA)
+names(RUZAFA)
+
+>>>>>>> 390cfb33d55e48d56bc00cffcc3c6f7d080e3dd6
 attach(RUZAFA)
 
 max(dateObserved) # última fecha
 min(dateObserved) # primera fecha
 
-RUZAFA%>%
-  group_by(Año = year(dateObserved))%>%
-  summarise(min= min(dateObserved) ,max = max(dateObserved))
-
 table(entityType)
 table(fiwareServicePath)
 table(entityId)
+<<<<<<< HEAD
 ```
 
 Realizamos un gráfico para ver de manera más visual la información sobre los días de estudio de cada calles, diferenciando los años de los datos con colores.
 
 ```{r}
 ggplot(RUZAFA, aes(entityId, fill =factor(year(dateObserved)))) + geom_bar() +theme(axis.text.x = element_text(angle = 90, hjust = 1))+labs(x="Calles",y = "dias", title="Dias de estudio por calle") + guides(fill = guide_legend(title = "Años"))
+=======
+
+>>>>>>> 390cfb33d55e48d56bc00cffcc3c6f7d080e3dd6
 detach(RUZAFA)
 
 ```
 
-Mediante estas funciones hemos observado varias cosas a destacar sobre la información.
+Mediante estas funciones hemos observado varias cosas a destacar sobre la información:
 
-Como por ejemplo, vemos que solo hay un tipo de sensor y servicio al que pertencen los datos.
+DIMENSIONES RUZAFA -->
+   - Columnas = 11
+   - Filas = 6450
+   
+NOMBRES VARIABLES DE RUZAFA : 
+(id, recvTime,fiwareServicePath,entityType,entityI,LAeq,LAeq_d,LAeq_den,LAeq_e,LAeq_n,
+dateObserved)
 
-Utilizando las funciones $max()$ y $min()$ vemos que los datos se han recogido desde 2020-09-17 hasta 2022-04-10.
+MAXIMA FECHA OBSERVADA: 2022-04-10
+MINIMA FECHA OBSERVADA: 2020-09-17
 
-Tambiém vemos que el año 2021 esta completo, es decir, la última fecha en la que se ha recogido información es el último día del año. Mientras que en los otros dos, 2020 y 2022, la última recogida de información no es el último día del año.
+DATOS DISPONIBLES DE CADA CALLE -->
 
-Por último, gracias al gráfico vemos que en una calle de las registradas no hay información sobre el año 2022.
+T248652-daily: 469
+T248655-daily: 476
+T248661-daily: 483
+T248669-daily: 488
+T248670-daily: 464 
+T248671-daily: 475
+T248672-daily: 465
+T248676-daily: 460 
+T248677-daily: 476 
+T248678-daily: 487 
+T248680-daily: 454 
+T248682-daily: 447
+T248683-daily: 327
+T248684-daily: 479 
+
+DISTINTOS TIPOS DE SENSOR : 1
+DISTINTOS TIPOS DE SERVIVIOS A LOS QUE PERTENECEN LOS SENSORES: 1
+
+
+```{r}
+#Analizamos si los años estan compeltos o a alguno le falta algun dato
+RUZAFA%>%
+  group_by(Año = year(dateObserved))%>%
+  summarise(min= min(dateObserved) ,max = max(dateObserved))
+```
+
+Vemos que el año 2021 esta completo, es decir, la última fecha en la que se ha recogido información es el último día del año. Mientras que en 2020 empezamos a recolectar los datos desde Septiembre y en 2022 no tenemos más datos a partir de abril.
+
+```{r}
+#Hacemos una tabla con el resumen de las variables numericas
+RUZAFA1= pivot_wider(RUZAFA)
+RUZAFA1 = RUZAFA1 %>% select(starts_with("LA"))
+
+summary = summary(RUZAFA1)
+SUMMARY = data.frame(summary)
+SUMMARY = SUMMARY %>% separate(Freq, into = c("Medida", "Valor"), sep= ":")
+SUMMARY = pivot_wider(SUMMARY, names_from = Medida, values_from = Valor)
+SUMMARY = SUMMARY %>% select(-Var1) 
+SUMMARY
+```
+
+LLama la atencion que en algunos valores pone "Inf", esto es debido a que como aun no hemos "limpiado" nuestros datos, hay valores incorrectos que deben de ser sustituidos.
+
+Con los datos que tenemos parece ser que el menor nivel sonoro registrado fue por la noche y el mayor durante el dia,tarde y noche. Y haciendo las medias de cada nivel sonoro parece que los mayores niveles los ha registrado el sensor de dia, tarde, noche, pero no podemos estar seguros hasta que no limpiemos nuestros datos.
+
+
+```{r}
+#Realizamos un gráfico para ver de manera más visual la información sobre los
+#días de estudio y las calles
+
+ggplot(RUZAFA, aes(entityId, fill =factor(year(dateObserved)))) + 
+geom_bar() + 
+theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+labs(x="Calles",y = "dias", title="Dias de estudio por calle") +
+guides(fill = guide_legend(title = "Años"))
+
+```
+
+Gracias al gráfico vemos que en una calle de las registradas no hay información sobre el año 2022. Y que no todas als calles tienen el minmo numero de datos para el año 2020 y 2021, sin embargo para 2022 si.
 
 
 # Planteamos preguntas a resolver
@@ -136,7 +212,7 @@ Por último, gracias al gráfico vemos que en una calle de las registradas no ha
 HILO DE LA PRESENTACION-->
 Un señor que no esta seguro si comprarse una casa en Ruzafa y que tampoco sabe cuál sería la mejor calle para vivir, nos ha planteado las siguientes preguntas:
 
-1.¿Cuál es la calle que más ha molestado a los vecinos en en los tres últimos años?¿Y la que menos?(Laura).
+1.¿Cuál es la calle que más ha molestado a los vecinos en en los tres últimos años?¿Y la que menos?.
 2.¿Qué calle ha incrementado más el ruido a lo largo del año 2022?. (Laura)
 3.¿La sonoridad en Ruzafa ha ido aumentado o disminuyendo a lo largo del tiempo?.
 4.¿El covid afectó en algo? ¿Y las fallas? ¿Y la Navidad?.
@@ -176,6 +252,7 @@ RUZAFA_TIDY2 <- RUZAFA1 %>% gather(Nivel_Sonoro, Valores, 4:8)
 ```
 
 Observamos si hay si hay datos faltantes o incorrectos para sustituirlos. Como hemos visto, hay dos valores "Inf" que los sustituiremos por los valores más frecuentes(media).
+
 ```{r}
 breaks <- c(min(RUZAFA_TIDY2$Valores), 0, 5, max(RUZAFA_TIDY2$Valores))
 
@@ -191,21 +268,24 @@ RUZAFA_TIDY <- RUZAFA_TIDY2 %>%
 # y convertimos la columna Nivel_Sonoro en factores .
 
 View(RUZAFA_TIDY)
+
 ```
 
-Por último separamos la columna Fecha Registro, ya que tiene dos variables una de fecha y otra de tiempo.
+Por último separamos la columna Fecha Registro, ya que tiene dos variables una de fecha y otra de tiempo y convertimos la columna fecha en una variable de tipo date.
+
 ```{r}
 RUZAFA_TIDY = RUZAFA_TIDY %>%
               separate(Fecha_Registro, into=c("Fecha_Registro","Hora_Registro"), sep=10) %>% mutate(Fecha_Registro = as.Date(Fecha_Registro))
-str(RUZAFA_TIDY)
 ```
 
 Aunque no es tidy, también añadimos la columna calles para que sea más fácil de entender los resultados. Entonces, seleccionamos la columna de Id_sensor.
+
 ```{r}
 Id_Sensor = RUZAFA_TIDY %>% select(Id_Sensor)
 ```
 
 El siguiente paso será crear una columna para las Calles e introducirla en nuestro dataframe.
+
 ```{r}
 RUZAFA_TIDY = RUZAFA_TIDY %>%  
   mutate(Id_Sensor = ifelse(Id_Sensor == "T248655-daily", "Cadiz3 ", Id_Sensor))%>% 
@@ -228,11 +308,13 @@ colnames(RUZAFA_TIDY) <- c("Id", "Fecha_Registro", "Hora_Registro", "Calles", "D
 ```
 
 Unimos el dataframe con las calles y con Id_Sensores.
+
 ```{r}
 RUZAFA_TIDY = cbind(RUZAFA_TIDY, Id_Sensor)
 ```
 
 Y por último, ordenamos de nuevo las columnas.
+
 ```{r}
 RUZAFA_TIDY = RUZAFA_TIDY [ , c(1,8,2,3,4,6,7,5)]
 ```
@@ -259,6 +341,7 @@ Año2022 =  RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2
 ```
 
 Los unimos y creamos un nuevo data frame para luego añadirle la columna de años convertida en Factor.
+
 ```{r}
 MaxMolestia = rbind(Año2020, Año2021, Año2022)
 
@@ -267,12 +350,13 @@ MaxMolestia
 ```
 
 Por último representamos con una gráfica las calles que mas han molestado a los vecinos en los ultimos 3 años.
+
 ```{r}
 a =ggplot(MaxMolestia, aes(Año, MaxRuido, color = Calles, size = MaxRuido)) + geom_point(shape = 3, size=5) + ggtitle("Calles con mayor nivel de ruido de media por año")+scale_y_continuous(limits = c(53,67),name = "Nivel de ruido") 
 a
 ```
 
-Como podemos ver, la calle que más ha molestado a los vecinos en 2020, 2021 y 2022 es la misma, Cádiz3.
+Como podemos ver, la calle que más ha molestado a los vecinos en 2020, 2021 y 2022 es la misma, Cádiz3. Con la difrerencia que en 2022 ha habido mas ruido en esa calle que en las otras dos.
 
 · *LA QUE MENOS:*
 
@@ -294,14 +378,14 @@ b =ggplot(MinMolestia, aes(Año, MinRuido, color = Calles, size=MinRuido)) + geo
 b
 ```
 
-En este caso,  podemos ver que la calle que menos ha molestado a los vecinos en 2020, 2021 y 2022 es la misma, GeneralPrim.
+En este caso,  podemos ver que la calle que menos ha molestado a los vecinos en 2020, 2021 y 2022 es la misma, GeneralPrim. Con la difrerencia que en 2020 ha habido menos ruido en esa calle que en las otras dos. 
 
 
 PREGUNTA 2
 
 ¿Qué calle ha incrementado mas el ruido a lo largo del año 2022?
 
-```{r}
+```{r, message=FALSE}
 RUZAFA_TIDY2 = RUZAFA_TIDY %>% filter(year(Dia_Medicion) == "2022") %>% group_by(Calles)
 RUZAFA_TIDY2 = RUZAFA_TIDY2%>%
               select(Calles, Valores, Dia_Medicion)
@@ -309,7 +393,7 @@ ggplot(RUZAFA_TIDY2, aes(Dia_Medicion, Valores)) + geom_line() + facet_wrap(~Cal
 
 ```
 
-Se puede ver que el nivel sonoro de cada calle a lo largo de 2022 (enero-marzo) no varía notablemente excepto en el mes de marzo que en todas las calles el nivel aumenta.
+Se puede ver que el nivel sonoro de cada calle a lo largo de 2022 (enero-abril) no varía notablemente excepto en el mes de marzo que en todas las calles el nivel aumenta. Esto es debido a las fallas
 
 
 PREGUNTA 3
@@ -318,30 +402,48 @@ PREGUNTA 3
 
 ```{r}
 RUZAFA_TIDY3_1 = RUZAFA_TIDY %>% select(Dia_Medicion, Calles, Valores) %>% group_by(year(Dia_Medicion)) %>% filter(year(Dia_Medicion) == "2020")
-ggplot(RUZAFA_TIDY3_1, aes(Dia_Medicion, Valores, color = month(Dia_Medicion)))+ geom_line() + geom_smooth(color="darkgrey")
+#Representacion:
+ggplot(RUZAFA_TIDY3_1, aes(Dia_Medicion, Valores, color = month(Dia_Medicion)))+ geom_line() + geom_smooth(color="darkgrey")+ labs(title = "Variacion de sonoridad en 2020")+xlab("Meses") + ylab("Nivel de Sonoridad")
 
-RUZAFA_TIDY3_2 = RUZAFA_TIDY %>% select(Dia_Medicion, Calles, Valores) %>% group_by(year(Dia_Medicion)) %>% filter(year(Dia_Medicion) == "2021")
-ggplot(RUZAFA_TIDY3_2, aes(Dia_Medicion, Valores, color = month(Dia_Medicion)))+ geom_line() + scale_y_continuous(limits=c(40,100)) + geom_smooth(color="darkgrey")
+RUZAFA_TIDY3_2 = RUZAFA_TIDY %>% select(Dia_Medicion, Calles, Valores) %>% group_by(year(Dia_Medicion)) %>% filter(year(Dia_Medicion) == "2021") 
+#Representacion:
+ggplot(RUZAFA_TIDY3_2, aes(Dia_Medicion, Valores, color = month(Dia_Medicion)))+ geom_line() + scale_y_continuous(limits=c(40,100)) + geom_smooth(color="darkgrey")+labs(title = "Variacion de sonoridad en 2021")+xlab("Meses") +ylab("Nivel de Sonoridad")
 
 RUZAFA_TIDY3_3 = RUZAFA_TIDY %>% select(Dia_Medicion, Calles, Valores) %>% group_by(year(Dia_Medicion)) %>% filter(year(Dia_Medicion) == "2022")
-
-ggplot(RUZAFA_TIDY3_3, aes(Dia_Medicion, Valores, color = month(Dia_Medicion)))+ geom_line() + scale_y_continuous(limits=c(40,100)) + geom_smooth(color="darkgrey")
+#Representacion:
+ggplot(RUZAFA_TIDY3_3, aes(Dia_Medicion, Valores, color = month(Dia_Medicion)))+ geom_line() + scale_y_continuous(limits=c(40,100)) + geom_smooth(color="darkgrey")+labs(title = "Variacion de sonoridad en 2022")+xlab("Meses") +ylab("Nivel de Sonoridad")
 ```
+################    que pasa en julio 2021 (Faltan datos en df)  ####################
 
-Ahora organizamos el ruido que ha habido por la noche en cada una de las calles y lo mostramos en un gráfico.
+Se puede ver que los primeros niveles sonoros registrados fueron entorno a 60 y los ultimos registrado tambien, entonces se puede concluir que la sonoridad de Ruzafa se ha mantenido mas o menos igual.
+
+Si que es verdad que en 2021 y 2020 los valores sonores son mucho mas variados que en 2020.
+Esto es debido a que en 2020 habian muchas restricciones nocturnas debido al covid y tampoco se celebraban las fiestas como la navidad. Por lo tanto debido al covid los nivles sonoros nocturnos y diurnos son muy parecidos por lo que durante 2020 los valores sonoros no varian mucho y son bastante constantes.
+
+Tambien se puede ver que en 2022 en el mes de marzo los valores sonoros ascienden notablemente debido a las fallas y en 2021 pasa lo mismo pero no es tan exagerado debido de nuevo al covid y que no se celebraron. Tambien en el 2021 se puede apreciar un pico en septiembre debiso a que las fallas se celebraron en ese mes en vez de en marzo.
+
+
+Ademas 
+¿Como ha variado la sonoridad por la noche?¿Que se destaca?
+
+Organizamos el ruido que ha habido por la noche en cada una de las calles y lo mostramos en un gráfico.
 
 Posteriormente, debemos relacionar el máximo ruido que hubo con la máxima noche de ruido.
 
 ```{r}
 dat = RUZAFA_TIDY %>% filter(Nivel_Sonoro == "Nivel_Sonoro_Noche") 
 
-#COLS = c("gray", "pink", "blue", "#5CB85C", "yellow", "orange", "purple", "black", "turquese", "brown", "green", "red", )
 ggplot(dat, aes(x = Dia_Medicion, y = Valores, color = Calles)) + geom_line(position = "jitter") + scale_color_discrete(labels = c("Calle 1", "Calle 2",  "Calle 3",  "Calle 4",  "Calle 5",  "Calle 6",  "Calle 7",  "Calle 8",  "Calle 9",  "Calle 10",  "Calle 11",  "Calle 12",  "Calle 13",  "Calle 14" )) + facet_wrap(~Calles)
 
-ggplot(dat, aes(x = Dia_Medicion, y = Valores, color = Calles)) + geom_line(position = "jitter") + scale_color_discrete(labels = c("Calle 1", "Calle 2",  "Calle 3",  "Calle 4",  "Calle 5",  "Calle 6",  "Calle 7",  "Calle 8",  "Calle 9",  "Calle 10",  "Calle 11",  "Calle 12",  "Calle 13",  "Calle 14" )) 
+ggplot(dat, aes(x = Dia_Medicion, y = Valores, color = Calles)) + geom_line(position = "jitter") + scale_color_discrete(labels = c("Calle 1", "Calle 2",  "Calle 3",  "Calle 4",  "Calle 5",  "Calle 6",  "Calle 7",  "Calle 8",  "Calle 9",  "Calle 10",  "Calle 11",  "Calle 12",  "Calle 13",  "Calle 14" )) + facet_wrap(~year(Dia_Medicion))
 
+#Maximos valores de por la noche de cada calle por meses
 dat= dat%>%group_by(Calles, Mes = month(Dia_Medicion)) %>% summarise(Max = max(Valores)) %>% mutate(Mes = ifelse(Mes == 1, "enero",Mes)) %>% mutate(Mes = ifelse(Mes == 2, "febrero",Mes)) %>% mutate(Mes = ifelse(Mes == 3, "marzo",Mes)) %>% mutate(Mes = ifelse(Mes == 4, "abril",Mes)) %>% mutate(Mes = ifelse(Mes == 5, "mayo",Mes)) %>% mutate(Mes = ifelse(Mes == 6, "junio",Mes)) %>% mutate(Mes = ifelse(Mes == 7, "julio",Mes)) %>% mutate(Mes = ifelse(Mes == 8, "agosto",Mes)) %>% mutate(Mes = ifelse(Mes == 9, "septiembre",Mes)) %>% mutate(Mes = ifelse(Mes == 10, "octubre",Mes)) %>% mutate(Mes = ifelse(Mes == 11, "noviembre",Mes)) %>% mutate(Mes = ifelse(Mes == 12, "diciembre",Mes))
-dat
+
+#En que meses estan los maximos valores por calle(Muchos en marzo---> Fallas)
+data.frame(dat)
+data = dat %>% filter(Max > quantile(Max, 0.90))
+data
 ```
 
 
@@ -355,10 +457,25 @@ PREGUNTA 4
 
 PREGUNTA 5
 
-¿Suele haber más silencio por la tarde o durante el día en Ruzafa?
+¿Suele haber más silencio por la tarde, noche o durante el día en Ruzafa?
 
 ```{r}
+#Normalmente hay mas ruido por el dia
+B = RUZAFA_TIDY %>% select(Nivel_Sonoro, Valores) %>% filter(Nivel_Sonoro == "Nivel_Sonoro_Dia" | Nivel_Sonoro == "Nivel_Sonoro_Tarde" | Nivel_Sonoro == "Nivel_Sonoro_Noche")
+B = B %>% group_by(Nivel_Sonoro) %>% summarise(Valores = mean(Valores))%>%mutate(Comparacion = "Todos años")%>% mutate(Comparacion = as.factor(Comparacion))
+B
 
+#Y si comparamos el ruido por el dia tarde y noche en el mes de fallas de 2022:
+C = RUZAFA_TIDY %>% select(Nivel_Sonoro, Valores, Fecha_Registro) %>% filter(Nivel_Sonoro == "Nivel_Sonoro_Dia" | Nivel_Sonoro == "Nivel_Sonoro_Tarde" | Nivel_Sonoro == "Nivel_Sonoro_Noche") %>% filter(year(Fecha_Registro) == 2022 & month(Fecha_Registro)== 4 & day(Fecha_Registro)>10 & day(Fecha_Registro)< 20) %>% group_by(Nivel_Sonoro) %>% summarise(Valores= mean(Valores))%>%mutate(Comparacion = "Fallas") %>% mutate(Comparacion = as.factor(Comparacion))
+C
+
+#Comparamos el nivel de sonoridad por el dia, tarde y noche de Ruzafa durante los 3 ultimos años y la semana de fallas de estas ultimas fallas
+
+d =rbind(B,C)
+d
+
+ggplot(d, aes(Nivel_Sonoro, Valores, color= Comparacion)) + geom_point()
+ 
 ```
 
 PREGUNTA 6
@@ -433,7 +550,7 @@ MinMolNoVe = rbind(ENERO2,FEBRERO2,MARZO2,ABRIL2,MAYO2,SEPTIEMBRE2,OCTUBRE2,NOVI
 MinMolNoVe = MinMolNoVe %>% mutate(Mes = c("ENERO","FEBRERO","MARZO","ABRIL","MAYO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE")) %>% mutate(Mes= as.factor(Mes))
 
 #Por último representamos las calles que menos han molestado a los vecinos en los meses de no verano.
-MinMol =ggplot(MinMolNoVe, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(20,70),name = "Nivel de ruido") 
+MinMol =ggplot(MinMolNoVe, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 2, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(20,70),name = "Nivel de ruido") 
 MinMol
 ```
 
@@ -627,21 +744,39 @@ f_dm <- table(RUZAFA_TIDY$Dia_Medicion)
 head(f_dm)
 ```
 
-```{r}
-# gráfico fecha registro
-ggplot(RUZAFA_TIDY, aes(x = Fecha_Registro, y = Valores)) +
-  geom_line(aes(group_by = Fecha_Registro, col = Fecha_Registro))
-```
+Vamos a hacer una representación de la densidad de los valores sonoros, para ver cual es el nivel sonoro que más ocurre y el que menos.
 ```{r}
 # gráfico de densidad de valores
 plot(density(RUZAFA_TIDY$Valores), main = "Densidad del nivel Sonoro", 
-     xlab = "nivel sonoro", ylab = "Densidad")
+     xlab = "nivel sonoro", ylab = "densidad")
 ```
-
+En esta representación vemos claramente que la densidad del nivel sonoro entre $55$ y $65$ es la que más destaca, por tanto, sabemos que el nivel sonoro que más ocurre en nuestros datos está entre el $55$ y $65$.
 
 # Análisis Bivariante
 
-```{r}
+```{r, warning = FALSE}
+#Matriz de covarianza de todos los niveles sonosoros para ver cuales tienen mas relacion entre si
+
+#Usamos pivot wider poner de nuevo en columnas los niveles sonoros y poder ver el nivel de relacion entre  las variables
+
+a = pivot_wider(RUZAFA_TIDY,names_from = "Nivel_Sonoro", values_from = "Valores" )
+
+Datos <- select(a, starts_with("Nivel"))
+b = cor(Datos, method="pearson")
+data.frame(b)
+View(b)
+cor(a$Nivel_Sonoro_Noche,a$Nivel_Sonoro_Dia, method = "pearson")
+cor(a$Nivel_Sonoro_Tarde, a$Nivel_Sonoro_Dia, method = "pearson")
+
+
+#Vemso que el continuo tiene mas relacion con los valores de sonido de por el dia, y el que menos por la noche
+cor(a$Nivel_Sonoro_Continuo, a$Nivel_Sonoro_Dia, method= "pearson")
+cor(a$Nivel_Sonoro_Continuo, a$Nivel_Sonoro_Noche, method= "pearson")
+cor(a$Nivel_Sonoro_Continuo, a$Nivel_Sonoro_Tarde, method= "pearson")
+
+ggcorr(b, palette = "Pastel 2 ", color = 1:5, label = T, method = c("everything", "pearson"))
+
+
 
 ```
 
