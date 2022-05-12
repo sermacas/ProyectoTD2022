@@ -64,7 +64,7 @@ Sueca61 <- read_csv("data/Sueca61.csv", show_col_types = FALSE)
 SuecaEsqDenia <- read_csv("data/SuecaEsqDenia.csv", show_col_types = FALSE)
 ```
 
-Para una clara exploración debemos unir los dataframes, creando así uno más grande con toda la información, en este caso 'RUZAFA'.
+Para una clara exploración debemos unir los data frames, creando así uno más grande con toda la información, en este caso 'RUZAFA'.
 
 ```{r,include=FALSE}
 # unimos los data frames
@@ -515,7 +515,7 @@ MinMolNoVe = rbind(ENERO2,FEBRERO2,MARZO2,ABRIL2,MAYO2,SEPTIEMBRE2,OCTUBRE2,NOVI
 MinMolNoVe = MinMolNoVe %>% mutate(Mes = c("ENERO","FEBRERO","MARZO","ABRIL","MAYO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE")) %>% mutate(Mes= as.factor(Mes))
 
 #Por último representamos las calles que menos han molestado a los vecinos en los meses de no verano.
-MinMol =ggplot(MinMolNoVe, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 2, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(20,70),name = "Nivel de ruido") 
+MinMol =ggplot(MinMolNoVe, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 2, size = 4,)+ ggtitle("Calles con menor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(20,70),name = "Nivel de ruido") 
 MinMol
 ```
 
