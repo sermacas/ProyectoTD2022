@@ -22,9 +22,9 @@ library(GGally)
 
 ```
 
-Paso 3
+## Descarga de ficheros de datos
 
-Descargamos los ficheros de datos y los almacenamos en una carpeta, llamada 'data'.
+Descargamos los ficheros de datos con la información sobre las calles de ruzafa, y los almacenamos en una carpeta local $./data$.
 
 
 SIGNIFICADO DE LAS VARIABLES
@@ -40,7 +40,7 @@ LAeq_e: Es un indicador del nivel sonoro durante la tarde desde las 19 hasta las
 LAeq_n: Es un indicador del nivel sonoro durante la noche desde las 23 hasta las 7 horas.(8h)
 Dateobserved: Día al que se refieren las medidas.
 
-Paso 4
+## Importar y fusionar los datos en un solo dataframe
 
 Este paso consiste en importar y fusionar todos los datos en un solo dataframe ("RUZAFA"), además debemos realizar una exploración inicial de los datos.
 
@@ -64,7 +64,7 @@ Sueca61 <- read_csv("data/Sueca61.csv", show_col_types = FALSE)
 SuecaEsqDenia <- read_csv("data/SuecaEsqDenia.csv", show_col_types = FALSE)
 ```
 
-Para una clara exploración debemos unir los dataframes, creando así uno más grande con toda la información, en este caso 'RUZAFA'.
+Para una clara exploración debemos unir los data frames, creando así uno más grande con toda la información, en este caso 'RUZAFA'.
 
 ```{r,include=FALSE}
 # unimos los data frames
@@ -87,6 +87,8 @@ View(RUZAFA)
 
 ```
 
+## Exploración inicial
+
 Vamos a realizar la primera exploración inicial. 
 Para ello vamos a ver sus dimensiones, nombres de variables, mayor y menor fecha observada, resumen de los datos numericos...
 
@@ -94,18 +96,37 @@ Para ello vamos a ver sus dimensiones, nombres de variables, mayor y menor fecha
 #Dimension de df, nombre de variables, max y min fecha cantidad de distintos tipos de variables
 
 
+<<<<<<< HEAD
+```{r}
+# exploración inicial
+
+dim(RUZAFA) # dimensiones
+names(RUZAFA) # nombres de variables
+summary(RUZAFA) # resumen del dataframe
+str(RUZAFA)
+=======
 dim(RUZAFA)
 names(RUZAFA)
 
+>>>>>>> 390cfb33d55e48d56bc00cffcc3c6f7d080e3dd6
 attach(RUZAFA)
 
-max(dateObserved)
-min(dateObserved)
+max(dateObserved) # última fecha
+min(dateObserved) # primera fecha
 
 table(entityType)
 table(fiwareServicePath)
 table(entityId)
+<<<<<<< HEAD
+```
 
+Realizamos un gráfico para ver de manera más visual la información sobre los días de estudio de cada calles, diferenciando los años de los datos con colores.
+
+```{r}
+ggplot(RUZAFA, aes(entityId, fill =factor(year(dateObserved)))) + geom_bar() +theme(axis.text.x = element_text(angle = 90, hjust = 1))+labs(x="Calles",y = "dias", title="Dias de estudio por calle") + guides(fill = guide_legend(title = "Años"))
+=======
+
+>>>>>>> 390cfb33d55e48d56bc00cffcc3c6f7d080e3dd6
 detach(RUZAFA)
 
 ```
@@ -186,7 +207,8 @@ guides(fill = guide_legend(title = "Años"))
 Gracias al gráfico vemos que en una calle de las registradas no hay información sobre el año 2022. Y que no todas als calles tienen el minmo numero de datos para el año 2020 y 2021, sin embargo para 2022 si.
 
 
-- PREGUNTAS:
+# Planteamos preguntas a resolver
+
 HILO DE LA PRESENTACION-->
 Un señor que no esta seguro si comprarse una casa en Ruzafa y que tampoco sabe cuál sería la mejor calle para vivir, nos ha planteado las siguientes preguntas:
 
@@ -206,17 +228,19 @@ Un señor que no esta seguro si comprarse una casa en Ruzafa y que tampoco sabe 
 RESPUESTA:
 En conclusion la calle que le recomendamos mas para vivir es: .... y la que menos es: .....
 
-# Paso 5
+## Tidy Dataset
 
 Para obtener un tidy dataset, es decir, un dataframe más representativo y claro, vamos a modificar los nombres de las columnas por unos más adecuados.
 
 Además de modificar los nombres de las columnas vamos a realizar ciertas operaciones para dejar un tidy dataset, como por ejemplo, eliminar las columnas que no son de utilidad, asegurarnos de que hay 1 única variable por columna, eliminar o sustituir datos faltantes o datos incorrectos...
 
 Primero comenzamos modificando el nomrbe de las columnas, mirando los nomrbes que tiene nuestro dataframe.
+
 ```{r}
-colnames(RUZAFA) # miramos los nombres que tiene el dataframe
+#colnames(RUZAFA) # miramos los nombres que tiene el dataframe
 colnames(RUZAFA) <- c("Id", "Fecha_Registro", "Servicio_Sensor", "Tipo_Entidad_Sensor", "Id_Sensor",
-                      "Nivel_Sonoro_Continuo", "Nivel_Sonoro_Dia", "Nivel_Sonoro_dtn", # dtn - día, tarde y noche
+                      "Nivel_Sonoro_Continuo", "Nivel_Sonoro_Dia", "Nivel_Sonoro_dtn", 
+                      # dtn - día, tarde y noche
                       "Nivel_Sonoro_Tarde", "Nivel_Sonoro_Noche", "Dia_Medicion", "Nombre_Calle")
 ```
 
@@ -231,10 +255,18 @@ Observamos si hay si hay datos faltantes o incorrectos para sustituirlos. Como h
 
 ```{r}
 breaks <- c(min(RUZAFA_TIDY2$Valores), 0, 5, max(RUZAFA_TIDY2$Valores))
+
 ggplot(RUZAFA_TIDY2, aes(Valores)) + geom_histogram(bins=30)
+
 RUZAFA_TIDY2 %>% count(Valores)
+
 RUZAFA_TIDY2 %>% filter(Valores != "Inf") %>% summarise(Media = mean(Valores))#Media 60.4
-RUZAFA_TIDY <- RUZAFA_TIDY2 %>% mutate(Valores = ifelse(Valores ==  "Inf", 60.4, Valores)) %>% mutate(Nivel_Sonoro = as.factor(Nivel_Sonoro)) #y convertimos la columna Nivel_Sonoro en factores .
+
+RUZAFA_TIDY <- RUZAFA_TIDY2 %>% 
+  mutate(Valores = ifelse(Valores ==  "Inf", 60.4, Valores)) %>% 
+  mutate(Nivel_Sonoro = as.factor(Nivel_Sonoro)) 
+# y convertimos la columna Nivel_Sonoro en factores .
+
 View(RUZAFA_TIDY)
 
 ```
@@ -288,7 +320,10 @@ RUZAFA_TIDY = RUZAFA_TIDY [ , c(1,8,2,3,4,6,7,5)]
 ```
 
 
-# Paso 6
+## ANÁLISIS DE DATOS
+
+Ahora vamos a hacer un análisis profundo de los datos para responder a las preguntas planteadas.
+
 
 PREGUNTA 1
 
@@ -515,7 +550,7 @@ MinMolNoVe = rbind(ENERO2,FEBRERO2,MARZO2,ABRIL2,MAYO2,SEPTIEMBRE2,OCTUBRE2,NOVI
 MinMolNoVe = MinMolNoVe %>% mutate(Mes = c("ENERO","FEBRERO","MARZO","ABRIL","MAYO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE")) %>% mutate(Mes= as.factor(Mes))
 
 #Por último representamos las calles que menos han molestado a los vecinos en los meses de no verano.
-MinMol =ggplot(MinMolNoVe, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 2, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(20,70),name = "Nivel de ruido") 
+MinMol =ggplot(MinMolNoVe, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 2, size = 4,)+ ggtitle("Calles con menor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(20,70),name = "Nivel de ruido") 
 MinMol
 ```
 
@@ -612,6 +647,7 @@ ggplot(ruido_calle, aes(x = Calles, y = Media, group = dia, color = dia)) +
        subtitle = "Nivel sonoro según el día de la semana y ordenado por las calles.")+scale_color_discrete(labels = c("lunes","martes","miercoles","jueves","viernes","sabado","domingo"))
 ```
 
+
 Con el gráfico que representa el nivel sonoro según el día de la semana ordenado por calles, podemos ver para cada calle, el día y el valor del nivel sonoro.
 Para cada día de la semana:
   
@@ -666,10 +702,57 @@ ggplot(ruido_calle, aes(x = dia, y = Valores, fill = dia)) +
 Podemos ver que el día que tiene los niveles sonoros más altos es el sábado y despues el viernes, coincide con los niveles de los dias de la semana mas alto por calle que son tambien o el viernes o el sabado.
 
 
+# Análisis Univariante
 
-PREGUNTA 9
+En esta sección vamos a analizar los datos variable a variable.
+Para ello vamos a utilizar un tidy Dataset, el dataframe $RUZAFA_TIDY$.
 
-Hay que hacer analisis univariante y bivariante
+Primero vamos a obtener la media de las variables, aunque de algunas no vamos a obtener resultados ya que sus valores no son numéricos.
+Por tanto, vamos a hacer este análisis de las variables numéricas.
+
+```{r}
+mean(RUZAFA_TIDY$Id)
+mean(RUZAFA_TIDY$Fecha_Registro)
+mean(RUZAFA_TIDY$Valores)
+mean(RUZAFA_TIDY$Dia_Medicion)
+```
+Media del número de valores que hay en el dataframe: $mean(Id)=386.3347$.
+Media de las fechas de registro: $mean(FechaRegistro)="2021-06-29"$, es decir, el 29 de junio de 2021.
+Media de los niveles de sonoridad: $mean(Valores)=60.4308$.
+Media del dia de medición: $mean(DiaMedicion)="2021-06-28"$, es decir, el 28 de junio de 2021.
+
+Ahora, vamos a obtener la mediana de las variables.
+```{r}
+median(RUZAFA_TIDY$Id)
+median(RUZAFA_TIDY$Fecha_Registro)
+median(RUZAFA_TIDY$Valores)
+median(RUZAFA_TIDY$Dia_Medicion)
+```
+Mediana del número de valores que hay en el dataframe: $231$.
+Mediana de las fechas de registro: $"2021-06-05"$, es decir, el 5 de junio de 2021.
+Mediana de los niveles de sonoridad: $60.6$.
+Mediana del dia de medición: $"2021-06-04"$, es decir, el 4 de junio de 2021.
+
+Vamos a hacer una tabla de frecuencia de cada variable, pero solo vamos a mostrar los 6 primeros elementos con sus frecuencias, ya que enseñar la tabla entera sería demasiada información.
+No vamos a hacer una tabla de frecuencia de la variable $Id$, por que al ser un identificador es único, es decir, su frecuencia es cero para todos los casos.
+```{r}
+f_fr <- table(RUZAFA_TIDY$Fecha_Registro)
+head(f_fr)
+f_v <- table(RUZAFA_TIDY$Valores)
+head(f_v)
+f_dm <- table(RUZAFA_TIDY$Dia_Medicion)
+head(f_dm)
+```
+
+Vamos a hacer una representación de la densidad de los valores sonoros, para ver cual es el nivel sonoro que más ocurre y el que menos.
+```{r}
+# gráfico de densidad de valores
+plot(density(RUZAFA_TIDY$Valores), main = "Densidad del nivel Sonoro", 
+     xlab = "nivel sonoro", ylab = "densidad")
+```
+En esta representación vemos claramente que la densidad del nivel sonoro entre $55$ y $65$ es la que más destaca, por tanto, sabemos que el nivel sonoro que más ocurre en nuestros datos está entre el $55$ y $65$.
+
+# Análisis Bivariante
 
 ```{r, warning = FALSE}
 #Matriz de covarianza de todos los niveles sonosoros para ver cuales tienen mas relacion entre si
@@ -697,9 +780,13 @@ ggcorr(b, palette = "Pastel 2 ", color = 1:5, label = T, method = c("everything"
 
 ```
 
-PREGUNTA 10
+# Análisis Multivariante
 
-Analizar los datos faltantes
+```{r}
+
+```
+
+# Análisis de los Datos Faltantes
 
 ```{r}
 
