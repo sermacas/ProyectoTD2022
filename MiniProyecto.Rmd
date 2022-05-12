@@ -585,18 +585,73 @@ ggplot(ruido_calle, aes(x = dia, y = Valores, color = dia)) +
 Podemos ver que el día que tiene los niveles sonoros más altos es el sábado.
 
 
+# Análisis Univariante
 
-PREGUNTA 9
+En esta sección vamos a analizar los datos variable a variable.
+Para ello vamos a utilizar un tidy Dataset, el dataframe $RUZAFA_TIDY$.
 
-Hay que hacer analisis univariante y bivariante
+Primero vamos a obtener la media de las variables, aunque de algunas no vamos a obtener resultados ya que sus valores no son numéricos.
+Por tanto, vamos a hacer este análisis de las variables numéricas.
+
+```{r}
+mean(RUZAFA_TIDY$Id)
+mean(RUZAFA_TIDY$Fecha_Registro)
+mean(RUZAFA_TIDY$Valores)
+mean(RUZAFA_TIDY$Dia_Medicion)
+```
+Media del número de valores que hay en el dataframe: $mean(Id)=386.3347$.
+Media de las fechas de registro: $mean(FechaRegistro)="2021-06-29"$, es decir, el 29 de junio de 2021.
+Media de los niveles de sonoridad: $mean(Valores)=60.4308$.
+Media del dia de medición: $mean(DiaMedicion)="2021-06-28"$, es decir, el 28 de junio de 2021.
+
+Ahora, vamos a obtener la mediana de las variables.
+```{r}
+median(RUZAFA_TIDY$Id)
+median(RUZAFA_TIDY$Fecha_Registro)
+median(RUZAFA_TIDY$Valores)
+median(RUZAFA_TIDY$Dia_Medicion)
+```
+Mediana del número de valores que hay en el dataframe: $231$.
+Mediana de las fechas de registro: $"2021-06-05"$, es decir, el 5 de junio de 2021.
+Mediana de los niveles de sonoridad: $60.6$.
+Mediana del dia de medición: $"2021-06-04"$, es decir, el 4 de junio de 2021.
+
+Vamos a hacer una tabla de frecuencia de cada variable, pero solo vamos a mostrar los 6 primeros elementos con sus frecuencias, ya que enseñar la tabla entera sería demasiada información.
+No vamos a hacer una tabla de frecuencia de la variable $Id$, por que al ser un identificador es único, es decir, su frecuencia es cero para todos los casos.
+```{r}
+f_fr <- table(RUZAFA_TIDY$Fecha_Registro)
+head(f_fr)
+f_v <- table(RUZAFA_TIDY$Valores)
+head(f_v)
+f_dm <- table(RUZAFA_TIDY$Dia_Medicion)
+head(f_dm)
+```
+
+```{r}
+# gráfico fecha registro
+ggplot(RUZAFA_TIDY, aes(x = Fecha_Registro, y = Valores)) +
+  geom_line(aes(group_by = Fecha_Registro, col = Fecha_Registro))
+```
+```{r}
+# gráfico de densidad de valores
+plot(density(RUZAFA_TIDY$Valores), main = "Densidad del nivel Sonoro", 
+     xlab = "nivel sonoro", ylab = "Densidad")
+```
+
+
+# Análisis Bivariante
 
 ```{r}
 
 ```
 
-PREGUNTA 10
+# Análisis Multivariante
 
-Analizar los datos faltantes
+```{r}
+
+```
+
+# Análisis de los Datos Faltantes
 
 ```{r}
 
