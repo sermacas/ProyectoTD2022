@@ -597,29 +597,28 @@ dias = c("lunes","martes","miercoles","jueves","viernes","sabado","domingo")
 
 ruido_calle <- RUZAFA_TIDY %>%
   mutate(dia = weekdays(Dia_Medicion))%>% # columna con los días de la semana
-  mutate(dia = factor(weekdays(Dia_Medicion), ordered = T)) %>%
+  mutate(dia = factor(weekdays(Dia_Medicion), ordered = F)) %>%
   select(-Dia_Medicion) %>% # eliminamos columna Dia_Medicion
-  group_by(dia,Valores) %>% # agrupamos por dia y valor de ruido
-  mutate(valor = mean(Valores)) %>% # columna con la media de valores
+  group_by(Calles,dia) %>% # agrupamos por dia y valor de ruido
+  mutate(Media = mean(Valores)) %>% # columna con la media de valores
   unique() # eliminamos los valores repetidos
 
+
 # representación por puntos
-ggplot(ruido_calle, aes(x = Calles, y = valor, group = dia, color = dia)) + 
-  geom_point() + geom_smooth() + 
+ggplot(ruido_calle, aes(x = Calles, y = Media, group = dia, color = dia)) + 
+  geom_point() + 
   theme(axis.text.x = element_text(angle = 90)) +
-  labs(title = "Nivel sonoro", 
-       subtitle = "Nivel sonoro según el día de la semana y ordenado por las calles.")
+  labs(title = "Nivel Sonoro", 
+       subtitle = "Nivel sonoro según el día de la semana y ordenado por las calles.")+scale_color_discrete(labels = c("lunes","martes","miercoles","jueves","viernes","sabado","domingo"))
 ```
 
 Con el gráfico que representa el nivel sonoro según el día de la semana ordenado por calles, podemos ver para cada calle, el día y el valor del nivel sonoro.
 Para cada día de la semana:
-  Lunes - (nada)
-  Martes - (nada)
-  Miercoles - Vivon Chaflán Cadiz
-  Jueves - cadiz 16
-  Viernes - Sueca 2
-  Sabado - Cadiz 3, Carles Cervera 34, Cuba 3, Doctor Serrano 21, General Prim, Puerto Rico 21, Salvador Abril Chaflán, Sueca 32, Sueca 61, Sueca Esquina Denia
-  Domingo - Carles Cervera Chaflán
+  
+  Viernes - Cdiz 16, Cadiz 3, General Prim, Salvador Abril Chaflán, Sueca2
+  
+  Sabado -  Carles Cervera 34, Cuba 3, Doctor Serrano 21, Puerto Rico 21, , Sueca 32, Sueca
+  61, Sueca Esquina Denia
   
   
 Vamos a hacer otra representación para ver los niveles sonoros de cada calle según el día.
@@ -629,7 +628,7 @@ Esta vez, separandolo por facetas.
 datos_semana <- RUZAFA_TIDY %>% 
   mutate(dia = weekdays(Dia_Medicion))%>%
   mutate(dia = factor(weekdays(Dia_Medicion),ordered = T))
-  
+
 
 ggplot(datos_semana, aes(x = dia, y = Valores, color = Calles)) + 
   geom_line(position = "jitter") + 
@@ -637,7 +636,8 @@ ggplot(datos_semana, aes(x = dia, y = Valores, color = Calles)) +
                                   "Calle 5",  "Calle 6",  "Calle 7",  "Calle 8",  
                                   "Calle 9",  "Calle 10",  "Calle 11",  "Calle 12",  
                                   "Calle 13",  "Calle 14" )) + 
-  facet_wrap(~Calles) + theme(axis.text.x = element_text(angle = 90))
+  facet_wrap(~Calles) + theme(axis.text.x = element_text(angle = 90)) +
+  scale_x_discrete(labels = c("lunes","martes","miercoles","jueves","viernes","sabado","domingo"))
 
 ```
 
@@ -654,16 +654,16 @@ Ahora vamos a ver la representación del nivel sonoro durante la semana sin tene
 Vamos a utilizar una representación boxplot.
 
 ```{r}
-ggplot(ruido_calle, aes(x = dia, y = Valores, color = dia)) + 
+ggplot(ruido_calle, aes(x = dia, y = Valores, fill = dia)) + 
   #geom_boxplot() +
   geom_col(position = "stack") +
   theme(axis.text.x = element_text(angle = 90)) +
   labs(title = "Nivel sonoro según el día de la semana", 
-       subtitle = "Nivel sonoro según el día de la semana y ordenado por las calles.")
-
+       subtitle = "Nivel sonoro según el día de la semana y ordenado por las calles.")+ scale_y_continuous(limits = c(0,80))+
+  scale_x_discrete(labels = c("lunes","martes","miercoles","jueves","viernes","sabado","domingo"))
 ```
 
-Podemos ver que el día que tiene los niveles sonoros más altos es el sábado.
+Podemos ver que el día que tiene los niveles sonoros más altos es el sábado y despues el viernes, coincide con los niveles de los dias de la semana mas alto por calle que son tambien o el viernes o el sabado.
 
 
 
