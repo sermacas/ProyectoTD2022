@@ -186,18 +186,23 @@ Con los datos que tenemos parece ser que el menor nivel sonoro registrado fue po
 HILO DE LA PRESENTACION-->
 Un señor que no esta seguro si comprarse una casa en Ruzafa y que tampoco sabe cuál sería la mejor calle para vivir, nos ha planteado las siguientes preguntas:
 
+-Exploracion inicial
+- Datos faltantes
+
+(Completas 7)(Incompletas(*)3)
 1.¿Cuál es la calle que más ha molestado a los vecinos en en los tres últimos años?¿Y la que menos?.
-2.¿Qué calle ha incrementado más el ruido a lo largo del año 2022?. (Laura)
-3.¿La sonoridad en Ruzafa ha ido aumentado o disminuyendo a lo largo del tiempo?.
-4.¿El covid afectó en algo? ¿Y las fallas? ¿Y la Navidad?.
-5.¿Que calles han sido las más ruidosas durante el día, la tarde, y la noche? ¿Y las que menos?.
+2.¿Qué calle ha incrementado más el ruido a lo largo del año 2022?. 
+3.¿La sonoridad en Ruzafa ha ido aumentado o disminuyendo a lo largo del tiempo?.¿El covid afectó en algo? ¿Y las fallas? ¿Y la Navidad?.
+*4.¿Que calles han sido las más ruidosas durante el día, la tarde, y la noche? ¿Y las que menos?.
+5.¿Suele haber más silencio por la tarde, noche o durante el día en Ruzafa?
 6.¿Cuál es la calle que más MOLESTÓ a los vecinos sin contar los meses de verano? ¿Y la que menos?.
-7.¿En que mes ha habido más acumulación de ruido en Ruzafa en cada año?.
-8.¿Que calles son las más tranquilas para vivir en cada estacion de año?.
-9.¿En que calle hay más ruido los fines de semana en 2022? ¿Hay alguna relación con la más ruidosa por la noche?.
-10.¿En que día de la semana ha habido más ruido por calle?¿Y en general?.
-11. Hay que hacer analisis univariante y bivariante
-12. Analizar los datos faltantes
+7.¿Que calles son las más tranquilas para vivir en cada estacion de año?.
+8.¿En que calle hay más ruido los fines de semana en 2022? ¿Hay alguna relación con la más ruidosa por la noche?.
+*10.¿En que día de la semana ha habido más ruido por calle?¿Y en general?.
+*11.¿En que mes ha habido más acumulación de ruido en Ruzafa en cada año?.
+
+- Analisis univariante
+- Analisis bivariante
 
 RESPUESTA:
 En conclusion la calle que le recomendamos mas para vivir es: .... y la que menos es: .....
@@ -630,7 +635,7 @@ Para cada día de la semana:
   Sabado -  Carles Cervera 34, Cuba 3, Doctor Serrano 21, Puerto Rico 21, , Sueca 32, Sueca
   61, Sueca Esquina Denia
   
-  
+(Pregunta 10)
 Vamos a hacer otra representación para ver los niveles sonoros de cada calle según el día.
 Esta vez, separandolo por facetas.
 
@@ -749,7 +754,6 @@ cor(a$Nivel_Sonoro_Continuo, a$Nivel_Sonoro_Noche, method= "pearson")
 cor(a$Nivel_Sonoro_Continuo, a$Nivel_Sonoro_Tarde, method= "pearson")
 
 ggcorr(b, palette = "Pastel 2 ", color = 1:5, label = T, method = c("everything", "pearson"))
-
 
 
 ```
