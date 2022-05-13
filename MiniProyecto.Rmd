@@ -312,11 +312,11 @@ PREGUNTA 1
 
 Primero de todo, seleccionamos la calle con mas ruido de cada año:
 ```{r}
-Año2020 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2020") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
+Año2020 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2020" & Nivel_Sonoro == "Nivel_Sonoro_Continuo") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
-Año2021 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2021") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
+Año2021 = RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2021"& Nivel_Sonoro == "Nivel_Sonoro_Continuo") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 
-Año2022 =  RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2022") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
+Año2022 =  RUZAFA_TIDY %>% group_by(Calles) %>% filter(year(Dia_Medicion) == "2022"& Nivel_Sonoro == "Nivel_Sonoro_Continuo") %>% summarise(MaxRuido = mean(Valores)) %>% filter(MaxRuido == max(MaxRuido))
 ```
 
 Los unimos y creamos un nuevo data frame para luego añadirle la columna de años convertida en Factor.
@@ -365,10 +365,28 @@ PREGUNTA 2
 ¿Qué calle ha incrementado mas el ruido a lo largo del año 2022?
 
 ```{r, message=FALSE}
+
+#Hacer un grafico de la diferencia de cuanto a variado el ruido por calle en 2022.
+#Puede ser - y que una los puntos el grafico
+
 RUZAFA_TIDY2 = RUZAFA_TIDY %>% filter(year(Dia_Medicion) == "2022") %>% group_by(Calles)
 RUZAFA_TIDY2 = RUZAFA_TIDY2%>%
               select(Calles, Valores, Dia_Medicion)
+RUZAFA_TIDY2
 ggplot(RUZAFA_TIDY2, aes(Dia_Medicion, Valores)) + geom_line() + facet_wrap(~Calles)+geom_smooth(method = 'lm')
+
+#Incremento de ruido para 2022
+#RUZAFA_TIDY2 %>% group_by(Mes = month(Dia_Medicion)) %>% filter(Mes == 1 | Mes == 4) %>% summarise(mean(Valores))
+
+R1 = RUZAFA_TIDY2 %>% group_by(Mes = month(Dia_Medicion), Calles) %>% filter(Mes == 1 | Mes == 4) %>% summarise(Media= mean(Valores)) %>% mutate(Mes = as.factor(Mes))
+R1 = pivot_wider(R1, names_from= Mes, values_from = Media)
+R1 = data.frame(R1) 
+R1 = R1 %>% mutate(X1 = as.numeric(X1)) 
+R1 = R1 %>% mutate(X4 = as.numeric(X4))
+R1 = R1 %>% mutate(Incremento = X4 - X1)
+R1
+
+ggplot(R1, aes(Calles, Incremento, fill = Calles, alpha = 1))+ geom_col()+theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
 
@@ -431,6 +449,16 @@ PREGUNTA 4
 ¿Qué calles han sido las más ruidosas durante el día, la tarde, y la noche? ¿Y las que menos?
 
 ```{r}
+
+MaxDia = RUZAFA_TIDY %>% filter(Nivel_Sonoro == "Nivel_Sonoro_Dia") %>% group_by(Calles)%>% select(Calles, Valores) %>% summarise(Valores = (mean(Valores))) %>% filter(Valores == max(Valores))
+
+
+MaxTarde = RUZAFA_TIDY %>% filter(Nivel_Sonoro == "Nivel_Sonoro_Tarde") %>% group_by(Calles)%>% select(Calles, Valores) %>% summarise(Valores = (mean(Valores))) %>% filter(Valores == max(Valores))
+
+MaxNoche = RUZAFA_TIDY %>% filter(Nivel_Sonoro == "Nivel_Sonoro_Noche") %>% group_by(Calles)%>% select(Calles, Valores) %>% summarise(Valores = (mean(Valores))) %>% filter(Valores == max(Valores))
+
+rbind(MaxDia,MaxTarde,MaxNoche)
+
 
 ```
 
@@ -495,7 +523,8 @@ MaxMolNoVe = MaxMolNoVe %>% mutate(Mes = c("ENERO","FEBRERO","MARZO","ABRIL","MA
 
 Y ya, por último representamos las calles que mas han molestado a los vecinos en general exceptuando los meses de verano.
 ```{r}
-maxnove =ggplot(MaxMolNoVe, aes(Mes, MaxRuido, color = Calles, size=MaxRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(45,85),name = "Nivel de ruido") 
+
+maxnove =ggplot(MaxMolNoVe, aes(Mes, MaxRuido, color = Calles, size=MaxRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(45,85),name = "Nivel de ruido")+theme(axis.text.x = element_text(angle = 45, hjust = 1))
 maxnove
 ```
 
@@ -689,7 +718,7 @@ Para ello vamos a utilizar un tidy Dataset, el dataframe $RUZAFA_TIDY$.
 Primero vamos a obtener la media de las variables, aunque de algunas no vamos a obtener resultados ya que sus valores no son numéricos.
 Por tanto, vamos a hacer este análisis de las variables numéricas.
 
-```{r}
+```{r, include = FALSE}
 mean(RUZAFA_TIDY$Id)
 mean(RUZAFA_TIDY$Fecha_Registro)
 mean(RUZAFA_TIDY$Valores)
@@ -701,7 +730,7 @@ Media de los niveles de sonoridad: $mean(Valores)=60.4308$.
 Media del dia de medición: $mean(DiaMedicion)="2021-06-28"$, es decir, el 28 de junio de 2021.
 
 Ahora, vamos a obtener la mediana de las variables.
-```{r}
+```{r, include = FALSE}
 median(RUZAFA_TIDY$Id)
 median(RUZAFA_TIDY$Fecha_Registro)
 median(RUZAFA_TIDY$Valores)
