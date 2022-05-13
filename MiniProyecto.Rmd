@@ -90,7 +90,7 @@ View(RUZAFA)
 ## Exploración inicial
 
 Vamos a realizar la primera exploración inicial. 
-Para ello vamos a ver sus dimensiones, nombres de variables, mayor y menor fecha observada, resumen de los datos numericos...
+Para ello vamos a ver sus dimensiones, nombres de variables, mayor y menor fecha observada, resumen de los datos numéricos...
 
 ```{r, include = FALSE}
 #Dimension de df, nombre de variables, max y min fecha cantidad de distintos tipos de variables
@@ -108,7 +108,6 @@ table(fiwareServicePath)
 table(entityId)
 
 detach(RUZAFA)
-
 ```
 
 Mediante estas funciones hemos observado varias cosas a destacar sobre la información:
@@ -121,8 +120,8 @@ NOMBRES VARIABLES DE RUZAFA :
 (id, recvTime,fiwareServicePath,entityType,entityI,LAeq,LAeq_d,LAeq_den,LAeq_e,LAeq_n,
 dateObserved)
 
-MAXIMA FECHA OBSERVADA: 2022-04-10
-MINIMA FECHA OBSERVADA: 2020-09-17
+MáXIMA FECHA OBSERVADA: 2022-04-10
+MíNIMA FECHA OBSERVADA: 2020-09-17
 
 DATOS DISPONIBLES DE CADA CALLE -->
 
@@ -148,8 +147,6 @@ Realizamos un gráfico para ver de manera más visual la información sobre los 
 
 ```{r}
 ggplot(RUZAFA, aes(entityId, fill =factor(year(dateObserved)))) + geom_bar() +theme(axis.text.x = element_text(angle = 90, hjust = 1))+labs(x="Calles",y = "dias", title="Dias de estudio por calle") + guides(fill = guide_legend(title = "Años"))
-
-
 ```
 Gracias al gráfico vemos que en una calle de las registradas no hay información sobre el año 2022. Y que no todas als calles tienen el minmo numero de datos para el año 2020 y 2021, sin embargo para 2022 si.
 
@@ -175,37 +172,36 @@ SUMMARY = SUMMARY %>% select(-Var1)
 SUMMARY
 ```
 
-LLama la atencion que en algunos valores pone "Inf", esto es debido a que como aun no hemos "limpiado" nuestros datos, hay valores incorrectos que deben de ser sustituidos.
+LLama la atención que en algunos valores pone "Inf", esto es debido a que como aún no hemos "limpiado" nuestros datos, hay valores incorrectos que deben de ser sustituidos.
 
-Con los datos que tenemos parece ser que el menor nivel sonoro registrado fue por la noche y el mayor durante el dia,tarde y noche. Y haciendo las medias de cada nivel sonoro parece que los mayores niveles los ha registrado el sensor de dia, tarde, noche, pero no podemos estar seguros hasta que no limpiemos nuestros datos.
-
+Con los datos que tenemos parece ser que el menor nivel sonoro registrado fue por la noche y el mayor durante el día,tarde y noche. Y haciendo las medias de cada nivel sonoro parece que los mayores niveles los ha registrado el sensor de día, tarde, noche, pero no podemos estar seguros hasta que no limpiemos nuestros datos.
 
 
 # Planteamos preguntas a resolver
 
 HILO DE LA PRESENTACION-->
-Un señor que no esta seguro si comprarse una casa en Ruzafa y que tampoco sabe cuál sería la mejor calle para vivir, nos ha planteado las siguientes preguntas:
+Un grupo de estudiantes acaban de llegar a Valencia y buscan un barrio tranquilo para poder estudiar sin que le molesten los vecinos. Les han comentado que el de Ruzafa es uno de los más tranquilos. Por ello, nos han pedido que estudiemos acerca de la contaminación acústica en este barrio.
 
--Exploracion inicial
+-Exploración inicial
 - Datos faltantes
 
 (Completas 7)(Incompletas(*)3)
 1.¿Cuál es la calle que más ha molestado a los vecinos en en los tres últimos años?¿Y la que menos?.
 2.¿Qué calle ha incrementado más el ruido a lo largo del año 2022?. 
 3.¿La sonoridad en Ruzafa ha ido aumentado o disminuyendo a lo largo del tiempo?.¿El covid afectó en algo? ¿Y las fallas? ¿Y la Navidad?.
-*4.¿Que calles han sido las más ruidosas durante el día, la tarde, y la noche? ¿Y las que menos?.
+*4.¿Qué calles han sido las más ruidosas durante el día, la tarde, y la noche? ¿Y las que menos?.
 5.¿Suele haber más silencio por la tarde, noche o durante el día en Ruzafa?
 6.¿Cuál es la calle que más MOLESTÓ a los vecinos sin contar los meses de verano? ¿Y la que menos?.
-7.¿Que calles son las más tranquilas para vivir en cada estacion de año?.
-8.¿En que calle hay más ruido los fines de semana en 2022? ¿Hay alguna relación con la más ruidosa por la noche?.
-*10.¿En que día de la semana ha habido más ruido por calle?¿Y en general?.
-*11.¿En que mes ha habido más acumulación de ruido en Ruzafa en cada año?.
+7.¿Qué calles son las más tranquilas para vivir en cada estacion de año?.
+8.¿Qué calle hace más ruido los fines de semana en 2022? ¿Hay alguna relación con la más ruidosa por la noche?.
+*10.¿En qué día de la semana ha habido más ruido por calle?¿Y en general?.
+*11.¿En qué mes ha habido más acumulación de ruido en Ruzafa en cada año?.
 
 - Analisis univariante
 - Analisis bivariante
 
 RESPUESTA:
-En conclusion la calle que le recomendamos mas para vivir es: .... y la que menos es: .....
+En conclusión la calle que le recomendamos mas para vivir es: .... y la que menos es: .....
 
 ## Tidy Dataset
 
@@ -213,10 +209,10 @@ Para obtener un tidy dataset, es decir, un dataframe más representativo y claro
 
 Además de modificar los nombres de las columnas vamos a realizar ciertas operaciones para dejar un tidy dataset, como por ejemplo, eliminar las columnas que no son de utilidad, asegurarnos de que hay 1 única variable por columna, eliminar o sustituir datos faltantes o datos incorrectos...
 
-Primero comenzamos modificando el nomrbe de las columnas, mirando los nomrbes que tiene nuestro dataframe.
+Primero comenzamos modificando el nombre de las columnas, mirando los nombres que tiene nuestro data frame.
 
 ```{r}
-#colnames(RUZAFA) # miramos los nombres que tiene el dataframe
+#colnames(RUZAFA) # miramos los nombres que tiene el data frame
 colnames(RUZAFA) <- c("Id", "Fecha_Registro", "Servicio_Sensor", "Tipo_Entidad_Sensor", "Id_Sensor",
                       "Nivel_Sonoro_Continuo", "Nivel_Sonoro_Dia", "Nivel_Sonoro_dtn", 
                       # dtn - día, tarde y noche
