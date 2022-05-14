@@ -1028,11 +1028,15 @@ Matriz de covarianza de todos los niveles sonoros para ver cuales tienen mas rel
 a = pivot_wider(RUZAFA_TIDY,names_from = "Nivel_Sonoro", values_from = "Valores" )
 #Seleccionamos aquellas columnas que empiezen por Nivel
 Datos <- select(a, starts_with("Nivel"))
+
 #Usamos le metodod de pearson para estudiar las relaciones
 b = cor(Datos, method="pearson")
+#Cambiamos el nombre las filas y columnas
+colnames(b) <- c("Continuo", "Dia", "d,t,n", "Tarde", "Noche")
+rownames(b) <- c("Continuo", "Dia", "d,t,n", "Tarde", "Noche")
 b%>%
   kbl() %>%
-  kable_paper("hover", full_width = F)
+  kable_paper("hover")
 ```
 
 Podemos representar la matriz de correlacion con el metodo de pearson
