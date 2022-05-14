@@ -383,7 +383,7 @@ R1 = RUZAFA_TIDY2 %>% group_by(Mes = month(Dia_Medicion), Calles) %>% filter(Mes
 R1 = pivot_wider(R1, names_from= Mes, values_from = Media)#meses en columnas
 R1 = data.frame(R1) #Convertimos los datos a data frame
 R1 = R1 %>% mutate(Incremento = X4 - X1)#obtenemos el incremento por calle
-R1                                      #mayor aumento coincide con la mas ruisosa
+R1                                  #mayor aumento coincide con la mas ruisosa
 
 #Lo representamos en un grafico para verlo mejor:
 ggplot(R1, aes(Calles, Incremento, fill = Calles))+ geom_col()+theme(axis.text.x = element_text(angle = 45, hjust = 1))+ ggtitle("Incremento de sonoridad en 2022")
