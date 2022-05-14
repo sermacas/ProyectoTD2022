@@ -693,7 +693,7 @@ vecinos en general exceptuando los meses de verano.
 
 ```{r}
 
-maxnove =ggplot(MaxMolNoVe, aes(Mes, MaxRuido, color = Calles, size=MaxRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(45,85),name = "Nivel de ruido")+theme(axis.text.x = element_text(angle = 45, hjust = 1)) + theme(legend.position = "top")
+maxnove =ggplot(MaxMolNoVe, aes(Mes, MaxRuido, color = Calles, size=MaxRuido)) + geom_point(shape = 8, size = 4)+ labs(title = "Calle mas ruidosa",subtitle = "Calles con mas nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(45,85),name = "Nivel de ruido")+theme(axis.text.x = element_text(angle = 45, hjust = 1)) + theme(legend.position = "top")
 maxnove
 ```
 
@@ -734,7 +734,7 @@ MinMolNoVe = MinMolNoVe %>% mutate(Mes = c("ENERO","FEBRERO","MARZO","ABRIL","MA
 
 MinMol =ggplot(MinMolNoVe, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con menor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(20,70),name = "Nivel de ruido") 
 
-MinMol =ggplot(MinMolNoVe, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 18, size = 4,)+ ggtitle("Calles con menor nivel de ruido de media por mes sin verano")+scale_y_continuous(limits = c(20,70),name = "Nivel de ruido") +theme(axis.text.x = element_text(angle = 45, hjust = 1))  + theme(legend.position = "top")
+MinMol =ggplot(MinMolNoVe, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 18, size = 4,)+ labs(title = "Calle menos ruidosa",subtitle = "Calles con menor nivel de ruido de media por mes sin verano") +scale_y_continuous(limits = c(20,70),name = "Nivel de ruido") +theme(axis.text.x = element_text(angle = 45, hjust = 1))  + theme(legend.position = "top")
 
 MinMol
 ```
@@ -767,7 +767,7 @@ estación del año.
 MinMolverano = rbind(JUNIO2,AGOSTO2)
 #Añadimos la columna de años y lo convertimos en factor
 MinMolverano = MinMolverano %>% mutate(Mes = c("JUNIO","AGOSTO")) %>% mutate(Mes= as.factor(Mes))
-MinMolverano =ggplot(MinMolverano, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media en verano")+scale_y_continuous(limits = c(20,80),name = "Nivel de ruido") 
+MinMolverano =ggplot(MinMolverano, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ labs(title = "Verano",subtitle = "Calles con mayor nivel de ruido de media en Verano") +scale_y_continuous(limits = c(20,80),name = "Nivel de ruido") 
 MinMolverano
 ```
 
@@ -783,7 +783,7 @@ Diciembre.
 MinMolOTOÑO = rbind(SEPTIEMBRE2,OCTUBRE2,NOVIEMBRE2,DICIEMBRE2)
 #Añadimos la columna de años y lo convertimos en factor
 MinMolOTOÑO = MinMolOTOÑO %>% mutate(Mes = c("SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE")) %>% mutate(Mes= as.factor(Mes))
-MinMolOTOÑO =ggplot(MinMolOTOÑO, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media en otoño.")+scale_y_continuous(limits = c(20,80),name = "Nivel de ruido") 
+MinMolOTOÑO =ggplot(MinMolOTOÑO, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+labs(title = "Otoño",subtitle = "Calles con mayor nivel de ruido de media en Otoño") +scale_y_continuous(limits = c(20,80),name = "Nivel de ruido") 
 MinMolOTOÑO
 ```
 
@@ -797,7 +797,7 @@ Suponemos invierno como los meses de Enero, Febrero y Marzo.
 MinMolINV = rbind(ENERO2,FEBRERO2,MARZO2)
 #Añadimos la columna de años y lo convertimos en factor
 MinMolINV = MinMolINV %>% mutate(Mes = c("ENERO","FERBREO","MARZO")) %>% mutate(Mes= as.factor(Mes))
-MinMolINV =ggplot(MinMolINV, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media en invierno")+scale_y_continuous(limits = c(20,80),name = "Nivel de ruido") 
+MinMolINV =ggplot(MinMolINV, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ labs(title = "Invierno",subtitle = "Calles con mayor nivel de ruido de media en Invierno") +scale_y_continuous(limits = c(20,80),name = "Nivel de ruido") 
 MinMolINV
 
 ```
@@ -813,7 +813,7 @@ Suponemos primavera como Abril y Mayo.
 MinMolPRIM = rbind(ABRIL2,MAYO2)
 #Añadimos la columna de años y lo convertimos en factor
 MinMolPRIM = MinMolPRIM %>% mutate(Mes = c("ABRIL","MAYO")) %>% mutate(Mes= as.factor(Mes))
-MinMolPRIM =ggplot(MinMolPRIM, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ ggtitle("Calles con mayor nivel de ruido de media en primavera")+scale_y_continuous(limits = c(20,80),name = "Nivel de ruido") 
+MinMolPRIM =ggplot(MinMolPRIM, aes(Mes, MinRuido, color = Calles, size=MinRuido)) + geom_point(shape = 8, size = 4,)+ labs(title = "Primavera",subtitle = "Calles con mayor nivel de ruido de media en primavera") + scale_y_continuous (limits = c(20,80),name = "Nivel de ruido") 
 MinMolPRIM
 ```
 
