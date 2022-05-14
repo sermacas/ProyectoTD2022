@@ -464,7 +464,7 @@ R1 = R1 %>% mutate(Incremento = X4 - X1)#obtenemos el incremento por calle
                                      
 R1%>%
   kbl() %>%
-  kable_styling()
+   kable_styling(bootstrap_options = "striped", full_width = F)
 #mayor aumento coincide con la mas ruidosa
 
 ```
@@ -474,7 +474,7 @@ Y por último, lo representamos en un gráfico para verlo mejor:
 ggplot(R1, aes(Calles, Incremento, fill = Calles))+ geom_col()+theme(axis.text.x = element_text(angle = 45, hjust = 1))+ ggtitle("Incremento de sonoridad en 2022")
 ```
 
-
+Vemos que todas las calles han incrementado en el año 2022 excepto Cuba3 que su contaminacion sonora ha disminuido notoriamente. La que menos a aumentado ha sido Salvador Abril Chaflan y la que mas Carles Cervera 34
 
 ----------------------------------------
 ***PREGUNTA 3***
@@ -523,18 +523,10 @@ También en el 2021 se puede apreciar un pico en Septiembre, ya que se celebraro
 las Fallas se celebraron en ese mes en vez de en Marzo, como suele ser.
 
 
-Ademas ¿Como ha variado la sonoridad por la noche?¿Que se destaca?
-
-Organizamos el ruido que ha habido por la noche en cada una de las
-calles y lo mostramos en un gráfico.
-
+Ademas podemos saber que mes ha alcanzado el maximo nivel de ruido para cada calle para ver que festividad tiene mayor contaminacion acustica, las falls o la navidad.
 
 ```{r}
-dat = RUZAFA_TIDY %>% filter(Nivel_Sonoro == "Nivel_Sonoro_Noche") 
-
-ggplot(dat, aes(x = Dia_Medicion, y = Valores, color = Calles)) + geom_line(position = "jitter") + scale_color_discrete(labels = c("Calle 1", "Calle 2",  "Calle 3",  "Calle 4",  "Calle 5",  "Calle 6",  "Calle 7",  "Calle 8",  "Calle 9",  "Calle 10",  "Calle 11",  "Calle 12",  "Calle 13",  "Calle 14" )) + facet_wrap(~Calles)
-
-ggplot(dat, aes(x = Dia_Medicion, y = Valores, color = Calles, group = Calles)) + geom_line(position = "jitter") + scale_color_discrete(labels = c("Calle 1", "Calle 2",  "Calle 3",  "Calle 4",  "Calle 5",  "Calle 6",  "Calle 7",  "Calle 8",  "Calle 9",  "Calle 10",  "Calle 11",  "Calle 12",  "Calle 13",  "Calle 14" )) 
+dat = RUZAFA_TIDY %>% filter(Nivel_Sonoro == "Nivel_Sonoro_Continuo") 
 
 #Maximos valores de por la noche de cada calle por meses
 dat= dat%>%group_by(Calles, Mes = month(Dia_Medicion)) %>% summarise(Max = max(Valores)) %>% mutate(Mes = ifelse(Mes == 1, "enero",Mes)) %>% mutate(Mes = ifelse(Mes == 2, "febrero",Mes)) %>% mutate(Mes = ifelse(Mes == 3, "marzo",Mes)) %>% mutate(Mes = ifelse(Mes == 4, "abril",Mes)) %>% mutate(Mes = ifelse(Mes == 5, "mayo",Mes)) %>% mutate(Mes = ifelse(Mes == 6, "junio",Mes)) %>% mutate(Mes = ifelse(Mes == 7, "julio",Mes)) %>% mutate(Mes = ifelse(Mes == 8, "agosto",Mes)) %>% mutate(Mes = ifelse(Mes == 9, "septiembre",Mes)) %>% mutate(Mes = ifelse(Mes == 10, "octubre",Mes)) %>% mutate(Mes = ifelse(Mes == 11, "noviembre",Mes)) %>% mutate(Mes = ifelse(Mes == 12, "diciembre",Mes)) 
@@ -544,9 +536,23 @@ data = dat %>% filter(Max > quantile(Max, 0.90))
 
 data%>%
   kbl() %>%
-  kable_styling()
-```
+  kable_classic(full_width = F, html_font = "Cambria")%>%
+  row_spec(1, bold = T, color = "white", background = "#FFD39B")%>%
+  row_spec(2, bold = T, color = "white", background = "#FFD39B") %>%
+  row_spec(3, bold = T, color = "white", background = "#FFD39B")%>%
+  row_spec(4, bold = T, color = "white", background = "#FFD39B")%>%
+  row_spec(5, bold = T, color = "white", background = "#FFD39B")%>%
+  row_spec(6, bold = T, color = "white", background = "#FFD39B")%>%
+  row_spec(7, bold = T, color = "white", background = "#FFD39B")%>%
+  row_spec(8, bold = T, color = "white", background = "#FFD39B")%>%
+  row_spec(11, bold = T, color = "white", background = "#FFD39B")%>%
+  row_spec(12, bold = T, color = "white", background = "#FFD39B")%>%
+  row_spec(13, bold = T, color = "white", background = "#FFD39B")%>%
+  row_spec(14, bold = T, color = "white", background = "#FFD39B")
 
+  
+```
+Vemos que en el mes de marzo se alcanzan los maximos ruidos para casi todas las calles. Entonces las fallas son la festividad con mayor contaminacion acustica
 ----------------------------------------
 ***PREGUNTA 4***
 ----------------------------------------
@@ -877,7 +883,7 @@ datos_semana =  datos_semana %>% select(Calles, Valores, dia) %>% group_by(Calle
 
 datos_semana %>%
   kbl() %>%
-  kable_styling()
+  scroll_box(width = "500px", height = "200px")
 
 #Representamos la media de cada dia de la semana por calle
 ggplot(datos_semana, aes(x = dia, y = Media, color = Calles)) + 
@@ -961,30 +967,31 @@ Mediana de las fechas de registro: $"2021-06-05"$, es decir, el 5 de junio de 20
 Mediana de los niveles de sonoridad: $60.6$.
 Mediana del dia de medición: $"2021-06-04"$, es decir, el 4 de junio de 2021.
 
-Vamos a hacer una tabla de frecuencia de cada variable, pero solo vamos
-a mostrar los 6 primeros elementos con sus frecuencias, ya que enseñar
-la tabla entera sería demasiada información. No vamos a hacer una tabla
+Vamos a hacer una tabla de frecuencia de cada variable.No vamos a hacer una tabla
 de frecuencia de la variable $Id$, por que al ser un identificador es
 único, es decir, su frecuencia es cero para todos los casos.
 
 ```{r}
+#Variable Fecha_Registro
 f_fr <-table(RUZAFA_TIDY$Fecha_Registro)
 f_fr=head(f_fr)
 f_fr %>%
   kbl() %>%
-  kable_styling()
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")
 
+#Variable Valores
 f_v <- table(RUZAFA_TIDY$Valores)
-f_v = head(f_v)
 f_v %>%
   kbl() %>%
-  kable_styling()
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")%>%
+  scroll_box(width = "200px", height = "500px")
 
+#Variable Dia_Medicion
 f_dm <- table(RUZAFA_TIDY$Dia_Medicion)
-f_dm = head(f_dm)
 f_dm %>%
   kbl() %>%
-  kable_styling()
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left")%>%
+   scroll_box(width = "200px", height = "500px")
 ```
 
 Vamos a hacer una representación de la densidad de los valores sonoros,
@@ -1001,6 +1008,8 @@ ggplot(RUZAFA_TIDY, aes(Valores))+geom_density()+geom_density(color = 4,
 En esta representación vemos claramente que la densidad del nivel sonoro
 entre $55$ y $65$ es la que más destaca, por tanto, sabemos que el nivel
 sonoro que más ocurre en nuestros datos está entre el $55$ y $65$.
+
+Al compararlo con la media vemos que casi coincide con el valor mas habitual.
 
 Y si calculamos la densidad de los valores registrados por el nivel dia, el de la tarde y el de la noche. Vemos que coincide con las deduciiones anteriores. La mayor contaminacion acustica sucede por el dia y la menor por la noche.
 ```{r}
@@ -1023,9 +1032,11 @@ Datos <- select(a, starts_with("Nivel"))
 b = cor(Datos, method="pearson")
 b%>%
   kbl() %>%
-  kable_styling()
+  kable_paper("hover", full_width = F)
 ```
+
 Podemos representar la matriz de correlacion con el metodo de pearson
+
 ```{r}
 ggcorr(b, palette = "Pastel 2 ", color = 1:5, label = T, method = c("everything", "pearson"))
 
