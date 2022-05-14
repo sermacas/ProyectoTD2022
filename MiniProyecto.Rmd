@@ -23,6 +23,8 @@ library(paletteer)
 library(plotly)
 library(GGally)
 library(kableExtra)
+library(gganimate)
+library(gifski)
 
 ```
 
@@ -156,7 +158,7 @@ Realizamos un gráfico para ver de manera más visual la información sobre los 
 >>>>>>> a37fcc0e93d4cc47ada24f0b0dc7f4d78ab7e7f6
 
 ```{r}
-ggplot(RUZAFA, aes(entityId, fill =factor(year(dateObserved)))) + geom_bar() +theme(axis.text.x = element_text(angle = 90, hjust = 1))+labs(x="Calles",y = "dias", title="Dias de estudio por calle") + guides(fill = guide_legend(title = "Años"))
+ggplot(RUZAFA, aes(entityId, fill =factor(year(dateObserved)))) + geom_bar() +theme(axis.text.x = element_text(angle = 90, hjust = 1))+labs(x="Calles",y = "dias", title="Dias de estudio por calle") + guides(fill = guide_legend(title = "Años"))+transition_states(year(dateObserved))
 ```
 
 Gracias al gráfico vemos que en una calle de las registradas no hay
@@ -172,7 +174,8 @@ COMPLT = RUZAFA%>%
 
 COMPLT %>%
   kbl() %>%
-  kable_styling()
+  kable_material( "hover")
+  
 ```
 
 Vemos que el año 2021 esta completo, es decir, la última fecha en la que
@@ -193,7 +196,7 @@ SUMMARY = SUMMARY %>% select(-Var1)
 
 SUMMARY %>%
   kbl() %>%
-  kable_styling()
+  kable_material(c("striped", "hover"))
 ```
 
 LLama la atención que en algunos valores pone "Inf", esto es debido a
@@ -354,9 +357,7 @@ RUZAFA_TIDY = RUZAFA_TIDY [ , c(1,8,2,3,4,6,7,5)]
 Ahora vamos a hacer un análisis profundo de los datos para responder a
 las preguntas planteadas.
 
-----------------------------------------
-***PREGUNTA 1***
-----------------------------------------
+## **Pregunta 1**
 
 **¿Cuál es la calle que más ha molestado a los vecinos en en los tres
 ultimos años?¿Y la que menos?**
@@ -383,7 +384,7 @@ MaxMolestia = MaxMolestia %>% mutate(Año = c(2020, 2021, 2022)) %>% mutate(Año
 
 MaxMolestia %>%
   kbl() %>%
-  kable_styling()
+  kable_material("hover")
 ```
 
 Por último representamos con una gráfica las calles que más han
@@ -424,9 +425,7 @@ vecinos en 2020, 2021 y 2022 es la misma, GeneralPrim. Con la
 difrerencia que en 2020 ha habido menos ruido en esa calle que en las
 otras dos.
 
-----------------------------------------
-***PREGUNTA 2***
-----------------------------------------
+## **Pregunta 2**
 
 **¿Qué calle ha incrementado mas el ruido a lo largo del año 2022?**
 
@@ -440,7 +439,7 @@ RUZAFA_TIDY2 = RUZAFA_TIDY2%>%
 A continuación, representamos en un geáfico la variación del ruido de cada calle por días.
 
 ```{r}
-ggplot(RUZAFA_TIDY2, aes(Dia_Medicion, Valores)) + geom_line() + facet_wrap(~Calles)+geom_smooth(method = 'lm')
+ggplot(RUZAFA_TIDY2, aes(Dia_Medicion, Valores)) + geom_line() + facet_wrap(~Calles)+geom_smooth(method = 'lm') 
 ```
 
 
@@ -471,14 +470,12 @@ R1%>%
 
 Y por último, lo representamos en un gráfico para verlo mejor:
 ```{r, echo=TRUE}
-ggplot(R1, aes(Calles, Incremento, fill = Calles))+ geom_col()+theme(axis.text.x = element_text(angle = 45, hjust = 1))+ ggtitle("Incremento de sonoridad en 2022")
+ggplot(R1, aes(Calles, Incremento, fill = Calles))+ geom_col()+theme(axis.text.x = element_text(angle = 45, hjust = 1))+ ggtitle("Incremento de sonoridad en 2022") 
 ```
 
 Vemos que todas las calles han incrementado en el año 2022 excepto Cuba3 que su contaminacion sonora ha disminuido notoriamente. La que menos a aumentado ha sido Salvador Abril Chaflan y la que mas Carles Cervera 34
 
-----------------------------------------
-***PREGUNTA 3***
-----------------------------------------
+## **Pregunta 3**
 
 **¿La sonoridad en Ruzafa ha ido aumentado o disminuyendo a lo largo del
 tiempo?¿El covid afectó en algo? ¿Y las fallas? ¿Y la Navidad?**
@@ -553,9 +550,8 @@ data%>%
   
 ```
 Vemos que en el mes de marzo se alcanzan los maximos ruidos para casi todas las calles. Entonces las fallas son la festividad con mayor contaminacion acustica
-----------------------------------------
-***PREGUNTA 4***
-----------------------------------------
+
+## **Pregunta 4**
 
 **¿Qué calles han sido las más ruidosas durante el día, la tarde, y la
 noche? ¿Y las que menos?**
@@ -607,9 +603,7 @@ a %>%
 
 Se puede en la tabla que la minima contaminacion sonora es de la calle General Prim tanto por el dia por la tarde como por la noche de los tres ultimos años. Coincide con los calculos anteriores donde afirbamamos que General Prim es la calle con menor media de nivel sonoro por año, es decir la que menos ha molestado a los vecinos.
 
-----------------------------------------
-***PREGUNTA 5***
-----------------------------------------
+## **Pregunta 5**
 
 **¿Suele haber más silencio por la tarde, noche o durante el día en
 Ruzafa?**
@@ -649,9 +643,7 @@ Segun la grafica, la contimacion acustica habitual se suele concentrar sobretodo
 Aunque parezca raro puede ser porque en el resto del año tambien existen otras festividades y las calles estan cortadas en fallas y ya no hay casi trafico.
 
 
-----------------------------------------
-***PREGUNTA 5***
-----------------------------------------
+## **Pregunta 6**
 
 **¿Cuál es la calle que más MOLESTÓ a los vecinos sin contar los meses
 de verano? ¿Y la que menos?**
@@ -751,9 +743,7 @@ Vemos que,la calle que menos ha molestado a los vecinos en todos los
 meses que no son verano ha sido la Calle Genral Prim. Por tanto, está
 será la calle más tranquila para vivir durante un año normal.
 
-----------------------------------------
-***PREGUNTA 7***
-----------------------------------------
+## **Pregunta 7**
 
 **¿Qué calles son las más tranquilas para vivir en cada estación del
 año?**
@@ -834,9 +824,7 @@ En general y en concordancia con lo estudiado anteriormente, la calle
 más tranquila para todas las estaciones del año es la Calle General
 Prim.
 
-----------------------------------------
-***PREGUNTA 8***
-----------------------------------------
+## **Pregunta 8**
 
 **¿Qué día de la semana hubo más ruido por calle?¿Y en general?**
 
